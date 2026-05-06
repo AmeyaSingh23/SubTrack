@@ -1,0 +1,92 @@
+// prisma/schema.prisma
+
+// Tells Prisma which database engine to use and where to find it
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// USER MODEL
+// Represents a registered SubTrack user.
+// Auth.js requires this exact shape (id, email, name, image)
+// to store user sessions in the database.
+// ============================================================
+model User {
+  id            String    @id @default(cuid())  // cuid() = collision-resistant unique ID
+  name          String?                          // ? means optional (nullable)
+  email         String    @unique                // No two users can share an email
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+
+  // Relations — one User has many Subscriptions and Accounts
+  subscriptions Subscription[]
+  accounts      Account[]       // Required by Auth.js for OAuth providers
+  sessions      Session[]       // Required by Auth.js to track login sessions
+}
+
+// ============================================================
+// SUBSCRIPTION MODEL
+// The core of SubTrack. Each row is one subscription
+// belonging to one user.
+// ============================================================
+model Subscription {
+  id             String   @id @default(cuid())
+  
+  name           String   // e.g. "Netflix", "Spotify"
+  amount         Float    // Actual deducted amount (handles forex/tax from PRD)
+  currency       String   @default("INR")
+  billingCycle   String   // "monthly" | "yearly" | "weekly"
+  nextBillingDate DateTime // When the next charge hits
+  category       String   // "Streaming" | "Work" | "Utilities" | etc.
+  
+  cancelUrl      String?  // Direct cancellation link (from PRD)
+  isTrial        Boolean  @default(false) // Is this currently in a free trial?
+  trialEndDate   DateTime?               // When does the trial expire?
+  
+  isActive       Boolean  @default(true)  // Soft delete - don't actually delete rows
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt      // Auto-updates on every save
+
+  // Foreign key - links this subscription to its owner
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // onDelete: Cascade means if a User is deleted, all their subscriptions are too
+}
+
+// ============================================================
+// ACCOUNT & SESSION MODELS
+// These are NOT custom - Auth.js requires them exactly as-is
+// to handle OAuth tokens and login sessions.
+// Think of them as Auth.js's internal bookkeeping tables.
+// ============================================================
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String  // e.g. "google", "github"
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId]) // One account per provider per user
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
