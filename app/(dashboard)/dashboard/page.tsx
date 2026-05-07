@@ -5,6 +5,7 @@
 // No useEffect, no loading spinners, no client-side fetch needed.
 // The data arrives WITH the page. This is called Server-Side Rendering (SSR).
 
+import type { Subscription } from "@prisma/client";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
@@ -42,11 +43,11 @@ export default async function DashboardPage() {
   // Subscriptions due in the next 7 days
   const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const upcoming = subscriptions.filter(
-    (sub) => sub.nextBillingDate <= sevenDaysFromNow
+    (sub: Subscription) => sub.nextBillingDate <= sevenDaysFromNow
   );
 
   // Group by category for breakdown
-  const byCategory = subscriptions.reduce((acc, sub) => {
+  const byCategory = subscriptions.reduce((acc: Record<string, number>, sub: Subscription) => {
     acc[sub.category] = (acc[sub.category] || 0) + sub.amount;
     return acc;
   }, {} as Record<string, number>);
