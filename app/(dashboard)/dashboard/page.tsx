@@ -8,6 +8,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import type { Subscription } from "@prisma/client";
 import { BurnRateCards } from "@/components/dashboard/burn-rate-cards";
 import { UpcomingBills } from "@/components/dashboard/upcoming-bills";
 import { CategoryBreakdown } from "@/components/dashboard/category-breakdown";
@@ -31,7 +32,7 @@ export default async function DashboardPage() {
   });
 
   // Calculate burn rates on the server before sending to client
-  const monthlyTotal = subscriptions.reduce((sum: number, sub: any) => {
+  const monthlyTotal = subscriptions.reduce((sum: number, sub: Subscription) => {
     if (sub.billingCycle === "monthly") return sum + sub.amount;
     if (sub.billingCycle === "yearly") return sum + sub.amount / 12;
     return sum;
@@ -42,11 +43,11 @@ export default async function DashboardPage() {
   // Subscriptions due in the next 7 days
   const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const upcoming = subscriptions.filter(
-    (sub: any) => sub.nextBillingDate <= sevenDaysFromNow
+    (sub: Subscription) => sub.nextBillingDate <= sevenDaysFromNow
   );
 
   // Group by category for breakdown
-  const byCategory = subscriptions.reduce((acc: Record<string, number>, sub: any) => {
+  const byCategory = subscriptions.reduce((acc: Record<string, number>, sub: Subscription) => {
     acc[sub.category] = (acc[sub.category] || 0) + sub.amount;
     return acc;
   }, {} as Record<string, number>);

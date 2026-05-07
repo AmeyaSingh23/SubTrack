@@ -7,8 +7,20 @@
 //   4. Returns a summary of what was sent
 
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { sendReminderEmail } from "@/lib/email";
+
+type UpcomingReminderSubscription = Prisma.SubscriptionGetPayload<{
+  include: {
+    user: {
+      select: {
+        name: true;
+        email: true;
+      };
+    };
+  };
+}>;
 
 export async function GET(request: NextRequest) {
   // SECURITY: Verify the request has our secret token.
@@ -32,7 +44,8 @@ export async function GET(request: NextRequest) {
     // Find all active subscriptions due in the next 48 hours,
     // and include the owner's user data (name + email) for the email.
     // This is a Prisma "include" — it's like a SQL JOIN.
-    const upcomingSubscriptions = await db.subscription.findMany({
+    const upcomingSubscriptions: UpcomingReminderSubscription[] =
+      await db.subscription.findMany({
       where: {
         isActive: true,
         nextBillingDate: {
