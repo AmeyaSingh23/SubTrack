@@ -11,6 +11,7 @@ import { db } from "@/lib/db";
 import { BurnRateCards } from "@/components/dashboard/burn-rate-cards";
 import { UpcomingBills } from "@/components/dashboard/upcoming-bills";
 import { CategoryBreakdown } from "@/components/dashboard/category-breakdown";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -53,13 +54,18 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <h1 className="text-xl font-semibold text-gray-900">
-          Hey, {session.user?.name?.split(" ")[0]} 👋
-        </h1>
-        <p className="text-sm text-gray-500">
-          Here&apos;s your subscription overview
-        </p>
+      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900">
+            Hey, {session.user?.name?.split(" ")[0]} 👋
+          </h1>
+          <p className="text-sm text-gray-500">
+            Here&apos;s your subscription overview
+          </p>
+        </div>
+        <Link href="/subscriptions/new" className="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+          +Add
+        </Link>
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
