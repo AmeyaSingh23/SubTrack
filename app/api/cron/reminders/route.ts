@@ -1,35 +1,32 @@
 // app/api/cron/reminders/route.ts
-// This is a Next.js API Route that acts as our cron job endpoint.
-// When called, it:
-//   1. Verifies the request is from our cron service (not a random person)
-//   2. Finds all subscriptions due in the next 48 hours
-//   3. Sends a reminder email for each one
-//   4. Returns a summary of what was sent
+// This route is called automatically by Vercel Cron every day.
+// It:
+//   1. Verifies the request is authorized
+//   2. Finds subscriptions due in the next 48 hours
+//   3. Sends reminder emails
+//   4. Returns a summary response
 
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
+
 import { db } from "@/lib/db";
 import { sendReminderEmail } from "@/lib/email";
 
-type UpcomingReminderSubscription = Prisma.SubscriptionGetPayload<{
-  include: {
-    user: {
-      select: {
-        name: true;
-        email: true;
-      };
-    };
-  };
-}>;
-
 export async function GET(request: NextRequest) {
-  // SECURITY: Verify the request has our secret token.
-  // Without this check, ANYONE could trigger mass emails by hitting this URL.
-  // The cron service will send this token in the Authorization header.
-  const authHeader = request.headers.get("authorization");
-  const expectedToken = `Bearer ${process.env.CRON_SECRET}`;
+  // SECURITY CHECK
+  // Accept either:
+  // 1. Manual CRON_SECRET auth (for local testing)
+  // 2. Vercel Cron automatic header in production
 
-  if (authHeader !== expectedToken) {
+  const authHeader = request.headers.get("authorization");
+
+  const isValidToken =
+    authHeader === `Bearer ${process.env.CRON_SECRET}`;
+
+  const isVercelCron =
+    request.headers.get("x-vercel-cron") === "1";
+
+  if (!isValidToken && !isVercelCron) {
     return NextResponse.json(
       { error: "Unauthorized" },
       { status: 401 }
@@ -37,24 +34,34 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Calculate the 48-hour window
+    // Current time
     const now = new Date();
-    const in48Hours = new Date(now.getTime() + 48 * 60 * 60 * 1000);
 
-    // Find all active subscriptions due in the next 48 hours,
-    // and include the owner's user data (name + email) for the email.
-    // This is a Prisma "include" — it's like a SQL JOIN.
-    const upcomingSubscriptions: UpcomingReminderSubscription[] =
-      await db.subscription.findMany({
+    // 48 hours from now
+    const in48Hours = new Date(
+      now.getTime() + 48 * 60 * 60 * 1000
+    );
+
+    // Find subscriptions due within next 48 hours
+    const upcomingSubscriptions: Prisma.SubscriptionGetPayload<{
+      include: {
+        user: {
+          select: {
+            name: true;
+            email: true;
+          };
+        };
+      };
+    }>[] = await db.subscription.findMany({
       where: {
         isActive: true,
         nextBillingDate: {
-          gte: now,       // Greater than or equal to now
-          lte: in48Hours, // Less than or equal to 48hrs from now
+          gte: now,
+          lte: in48Hours,
         },
       },
       include: {
-        user: {           // JOIN with the User table to get email + name
+        user: {
           select: {
             name: true,
             email: true,
@@ -63,7 +70,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Send an email for each subscription found
+    // Send all reminder emails in parallel
     const results = await Promise.allSettled(
       upcomingSubscriptions.map((sub) =>
         sendReminderEmail({
@@ -79,13 +86,18 @@ export async function GET(request: NextRequest) {
       )
     );
 
-    // Promise.allSettled runs all emails in parallel and collects results.
-    // Unlike Promise.all, it doesn't stop if one email fails —
-    // a failure for one user shouldn't block emails for everyone else.
-    const succeeded = results.filter((r) => r.status === "fulfilled").length;
-    const failed = results.filter((r) => r.status === "rejected").length;
+    // Count successes/failures
+    const succeeded = results.filter(
+      (r) => r.status === "fulfilled"
+    ).length;
 
-    console.log(`Cron ran: ${succeeded} emails sent, ${failed} failed`);
+    const failed = results.filter(
+      (r) => r.status === "rejected"
+    ).length;
+
+    console.log(
+      `Cron ran: ${succeeded} emails sent, ${failed} failed`
+    );
 
     return NextResponse.json({
       success: true,
@@ -93,9 +105,9 @@ export async function GET(request: NextRequest) {
       emailsFailed: failed,
       totalFound: upcomingSubscriptions.length,
     });
-
   } catch (error) {
     console.error("Cron job failed:", error);
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
