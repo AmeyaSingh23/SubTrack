@@ -42,11 +42,11 @@ export default async function DashboardPage() {
   // Subscriptions due in the next 7 days
   const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const upcoming = subscriptions.filter(
-    (sub) => sub.nextBillingDate <= sevenDaysFromNow
+    (sub: any) => sub.nextBillingDate <= sevenDaysFromNow
   );
 
   // Group by category for breakdown
-  const byCategory = subscriptions.reduce((acc: Record<string, number>, sub) => {
+  const byCategory = subscriptions.reduce((acc: Record<string, number>, sub: any) => {
     acc[sub.category] = (acc[sub.category] || 0) + sub.amount;
     return acc;
   }, {} as Record<string, number>);

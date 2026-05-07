@@ -2,7 +2,7 @@
 import { Subscription } from "@prisma/client";
 
 type Props = {
-  subscriptions: Subscription[];
+  subscriptions: any[];
 };
 
 // How many days until a date?
