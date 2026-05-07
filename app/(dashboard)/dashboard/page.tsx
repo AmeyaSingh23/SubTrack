@@ -31,7 +31,7 @@ export default async function DashboardPage() {
   });
 
   // Calculate burn rates on the server before sending to client
-  const monthlyTotal = subscriptions.reduce((sum, sub) => {
+  const monthlyTotal = subscriptions.reduce((sum: number, sub) => {
     if (sub.billingCycle === "monthly") return sum + sub.amount;
     if (sub.billingCycle === "yearly") return sum + sub.amount / 12;
     return sum;
