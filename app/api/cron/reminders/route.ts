@@ -85,6 +85,12 @@ export async function GET(request: NextRequest) {
         })
       )
     );
+    
+    results.forEach((result) => {
+      if (result.status === "rejected") {
+        console.error("Email send failed:", result.reason);
+      }
+    });
 
     // Count successes/failures
     const succeeded = results.filter(
