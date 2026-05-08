@@ -37,6 +37,10 @@ export async function GET(request: NextRequest) {
     // Current time
     const now = new Date();
 
+    // Start of TODAY in local/server time
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+
     // 48 hours from now
     const in48Hours = new Date(
       now.getTime() + 48 * 60 * 60 * 1000
@@ -56,7 +60,7 @@ export async function GET(request: NextRequest) {
       where: {
         isActive: true,
         nextBillingDate: {
-          gte: now,
+          gte: startOfToday,
           lte: in48Hours,
         },
       },
