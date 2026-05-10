@@ -117,8 +117,12 @@ export function SubscriptionDetailForm({
 
       <form
         action={formAction}
-        className="border-t border-white/6 pt-8 space-y-8"
-      >
+        className={`border-t border-white/6 pt-8 space-y-8 ${
+            !subscription.isActive
+                ? "opacity-50 pointer-events-none"
+                : ""
+        }`}
+    >
         {/* 01 Name */}
         <div>
           <FieldLabel number="01" label="Service Name" />
@@ -361,57 +365,57 @@ export function SubscriptionDetailForm({
           Danger Zone
         </p>
 
-        {!showDeleteConfirm ? (
-          <button
-            onClick={() => setShowDeleteConfirm(true)}
-            className="w-full border border-red-500/20
-                       text-red-400 font-mono text-xs
-                       uppercase tracking-widest px-6 py-3
-                       hover:bg-red-500/5
-                       hover:border-red-500/40
-                       transition-colors"
-          >
-            Cancel Subscription
-          </button>
-        ) : (
-          <div className="border border-red-500/30 bg-red-500/5 p-5 space-y-4">
-            <p className="font-mono text-sm text-white/60">
-              This will mark{" "}
-              <span className="text-white">
-                {subscription.name}
-              </span>{" "}
-              as cancelled. Your data is preserved but it
-              won&apos;t appear in active lists.
-            </p>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="border border-white/10
-                           text-white/40 font-mono text-xs
-                           uppercase tracking-widest py-3
-                           hover:text-white/60
-                           transition-colors"
-              >
-                Keep It
-              </button>
-
-              <button
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="bg-red-500/80 text-white
-                           font-mono text-xs uppercase
-                           tracking-widest py-3
-                           hover:bg-red-500 transition-colors
-                           disabled:opacity-40
-                           disabled:cursor-not-allowed"
-              >
-                {isDeleting
-                  ? "Cancelling..."
-                  : "Yes, Cancel"}
-              </button>
-            </div>
-          </div>
+        {subscription.isActive && (
+            <>
+                {!showDeleteConfirm ? (
+                    <button
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="w-full border border-red-500/20
+                                 text-red-400 font-mono text-xs
+                                   uppercase tracking-widest px-6 py-3
+                                 hover:bg-red-500/5
+                                 hover:border-red-500/40
+                                   transition-colors"
+                    >
+                        Cancel Subscription
+                    </button>
+                ) : (
+                    <div className="border border-red-500/30 bg-red-500/5 p-5 space-y-4">
+                        <p className="font-mono text-sm text-white/60">
+                            This will mark{" "}
+                            <span className="text-white">{subscription.name}</span>{" "}
+                            as cancelled. Your data is preserved but it
+                            won&apos;t appear in active lists.
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                className="border border-white/10
+                                         text-white/40 font-mono text-xs
+                                           uppercase tracking-widest py-3
+                                         hover:text-white/60
+                                           transition-colors"
+                            >
+                                Keep It
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                className="bg-red-500/80 text-white
+                                           font-mono text-xs uppercase
+                                           tracking-widest py-3
+                                           hover:bg-red-500 transition-colors
+                                           disabled:opacity-40
+                                           disabled:cursor-not-allowed"
+                            >
+                                {isDeleting
+                                    ? "Cancelling..."
+                                    : "Yes, Cancel"}
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </>
         )}
       </div>
     </div>
