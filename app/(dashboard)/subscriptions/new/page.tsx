@@ -1,23 +1,18 @@
-// app/(dashboard)/subscriptions/new/page.tsx
-// This page is a Server Component that renders the form shell.
-// The form itself is a Client Component because it needs interactivity
-// (showing/hiding the trial date field based on checkbox state).
-
 import { AddSubscriptionForm } from "@/components/subscriptions/add-subscription-form";
 
 export default function NewSubscriptionPage() {
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-xl mx-auto px-6 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Add Subscription
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Track a new recurring charge
+    <main className="min-h-screen bg-[#0a0a0a] text-white">
+      <div className="max-w-lg mx-auto px-8 py-12">
+        <div className="mb-10">
+          <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.3em] mb-3">
+            SubTrack / New
           </p>
+          <h1 className="text-4xl font-bold tracking-[-0.04em] text-white">
+            Track a<br />
+            <span className="text-white/30">subscription.</span>
+          </h1>
         </div>
-
         <AddSubscriptionForm />
       </div>
     </main>

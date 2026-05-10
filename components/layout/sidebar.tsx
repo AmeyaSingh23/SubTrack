@@ -78,7 +78,7 @@ function CollapseIcon() {
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: DashboardIcon },
-  { href: "/subscriptions/new", label: "Subscriptions", icon: SubscriptionsIcon },
+  { href: "/subscriptions", label: "Subscriptions", icon: SubscriptionsIcon },
   { href: "/analytics", label: "Analytics", icon: AnalyticsIcon },
   { href: "/reminders", label: "Reminders", icon: RemindersIcon },
   { href: "/settings", label: "Settings", icon: SettingsIcon },
