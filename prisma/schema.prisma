@@ -27,6 +27,7 @@ model User {
   subscriptions Subscription[]
   accounts      Account[]       // Required by Auth.js for OAuth providers
   sessions      Session[]       // Required by Auth.js to track login sessions
+  reminderLogs ReminderLog[]
 }
 
 // ============================================================
@@ -51,6 +52,7 @@ model Subscription {
   isActive       Boolean  @default(true)  // Soft delete - don't actually delete rows
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt      // Auto-updates on every save
+  lastNotifiedAt DateTime? // Track when we last sent a reminder for this sub
 
   // Foreign key - links this subscription to its owner
   userId         String
@@ -89,4 +91,21 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Logs every reminder email sent to a user.
+// This powers the Reminders page — a history of all alerts.
+model ReminderLog {
+  id               String   @id @default(cuid())
+  userId           String
+  subscriptionId   String
+  subscriptionName String   // Store name directly in case sub gets deleted
+  amount           Float
+  currency         String
+  billingDate      DateTime
+  sentAt           DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

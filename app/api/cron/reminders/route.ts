@@ -34,47 +34,49 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Current time
     const now = new Date();
-
-    // Start of TODAY in local/server time
-    const startOfToday = new Date(now);
-    startOfToday.setHours(0, 0, 0, 0);
-
-    // 48 hours from now
+    
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    
     const in48Hours = new Date(
       now.getTime() + 48 * 60 * 60 * 1000
     );
+    
+    const upcomingSubscriptions =
+      await db.subscription.findMany({
+        where: {
+          isActive: true,
+          nextBillingDate: {
+            gte: startOfToday,
+            lte: in48Hours,
+          },
 
-    // Find subscriptions due within next 48 hours
-    const upcomingSubscriptions: Prisma.SubscriptionGetPayload<{
-      include: {
-        user: {
-          select: {
-            name: true;
-            email: true;
-          };
-        };
-      };
-    }>[] = await db.subscription.findMany({
-      where: {
-        isActive: true,
-        nextBillingDate: {
-          gte: startOfToday,
-          lte: in48Hours,
+          OR: [
+            {
+              lastNotifiedAt: null,
+            },
+            {
+              lastNotifiedAt: {
+                lt: startOfToday,
+              },
+            }
+          ]
         },
-      },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
+        
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
           },
         },
-      },
-    });
-
-    // Send all reminder emails in parallel
+      });
+      
     const results = await Promise.allSettled(
       upcomingSubscriptions.map((sub) =>
         sendReminderEmail({
@@ -90,25 +92,52 @@ export async function GET(request: NextRequest) {
       )
     );
     
-    results.forEach((result) => {
-      if (result.status === "rejected") {
-        console.error("Email send failed:", result.reason);
-      }
-    });
+    // Create DB logs ONLY for successful emails
+    const logsToCreate = upcomingSubscriptions
+      .filter((_, i) => results[i].status === "fulfilled")
+      .map((sub) => ({
+        userId: sub.userId,
+        subscriptionId: sub.id,
+        subscriptionName: sub.name,
+        amount: sub.amount,
+        currency: sub.currency,
+        billingDate: sub.nextBillingDate,
+      }));
+    
+    if (logsToCreate.length > 0) {
+      await db.reminderLog.createMany({
+        data: logsToCreate,
+      });
+    }
 
-    // Count successes/failures
+    await Promise.all(
+      upcomingSubscriptions
+        .filter((_, i) => results[i].status === "fulfilled")
+        .map((sub) =>
+          db.subscription.update({
+            where: {
+              id: sub.id,
+            },
+            
+            data: {
+              lastNotifiedAt: now,
+            },
+          })
+        )
+    );
+
     const succeeded = results.filter(
       (r) => r.status === "fulfilled"
     ).length;
-
+    
     const failed = results.filter(
       (r) => r.status === "rejected"
     ).length;
-
+    
     console.log(
       `Cron ran: ${succeeded} emails sent, ${failed} failed`
     );
-
+    
     return NextResponse.json({
       success: true,
       emailsSent: succeeded,
