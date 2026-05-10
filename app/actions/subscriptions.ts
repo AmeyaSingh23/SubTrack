@@ -65,3 +65,67 @@ export async function createSubscription(
   // Step 6: Redirect back to dashboard
   redirect("/dashboard");
 }
+
+// Add these to the BOTTOM of app/actions/subscriptions.ts
+
+export async function updateSubscription(id: string, previousState: unknown, formData: FormData) {
+  "use server";
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  // Verify this subscription belongs to the logged-in user
+  // Never trust the client-sent ID alone — always check ownership
+  const existing = await db.subscription.findFirst({
+    where: { id, userId: session.user.id },
+  });
+  if (!existing) throw new Error("Not found");
+
+  const name = formData.get("name") as string;
+  const amount = parseFloat(formData.get("amount") as string);
+  const currency = formData.get("currency") as string;
+  const billingCycle = formData.get("billingCycle") as string;
+  const nextBillingDate = new Date(formData.get("nextBillingDate") as string);
+  const category = formData.get("category") as string;
+  const cancelUrl = formData.get("cancelUrl") as string;
+  const isTrial = formData.get("isTrial") === "on";
+  const trialEndDateRaw = formData.get("trialEndDate") as string;
+  const trialEndDate = trialEndDateRaw ? new Date(trialEndDateRaw) : null;
+
+  await db.subscription.update({
+    where: { id },
+    data: {
+      name, amount, currency, billingCycle,
+      nextBillingDate, category,
+      cancelUrl: cancelUrl || null,
+      isTrial, trialEndDate,
+    },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/subscriptions");
+  revalidatePath(`/subscriptions/${id}`);
+  redirect("/subscriptions");
+}
+
+export async function deleteSubscription(id: string) {
+  "use server";
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  // Again — verify ownership before deleting
+  const existing = await db.subscription.findFirst({
+    where: { id, userId: session.user.id },
+  });
+  if (!existing) throw new Error("Not found");
+
+  // Soft delete — set isActive to false rather than destroying the row.
+  // This preserves data history. Hard delete would be db.subscription.delete()
+  await db.subscription.update({
+    where: { id },
+    data: { isActive: false },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/subscriptions");
+  redirect("/subscriptions");
+}

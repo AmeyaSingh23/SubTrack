@@ -1,3 +1,6 @@
+// components/dashboard/upcoming-bills.tsx
+import Link from "next/link";
+
 type Subscription = {
   id: string;
   name: string;
@@ -46,7 +49,6 @@ function DaysBadge({ days }: { days: number }) {
 export function UpcomingBills({ subscriptions }: Props) {
   return (
     <div className="bg-white/3 border border-white/7 rounded-xl p-5">
-      {/* Top highlight */}
       <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
 
       <p className="text-[11px] font-mono text-white/30 uppercase tracking-widest mb-4">
@@ -63,36 +65,38 @@ export function UpcomingBills({ subscriptions }: Props) {
           {subscriptions.map((sub) => {
             const days = daysUntil(sub.nextBillingDate);
             return (
-              <li
-                key={sub.id}
-                className="flex items-center justify-between py-2.5 
-                           border-b border-white/4 last:border-0"
-              >
-                <div className="flex items-center gap-3">
-                  {/* Service initial avatar */}
-                  <div className="w-7 h-7 rounded-md bg-white/6 flex items-center 
-                                  justify-center text-[11px] font-mono font-semibold text-white/50">
-                    {sub.name[0].toUpperCase()}
+              <li key={sub.id}>
+                <Link
+                  href={`/subscriptions/${sub.id}`}
+                  className="flex items-center justify-between py-2.5
+                             border-b border-white/4 last:border-0
+                             hover:opacity-70 transition-opacity duration-150"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-md bg-white/6 flex items-center
+                                    justify-center text-[11px] font-mono font-semibold text-white/50">
+                      {sub.name[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white/80">
+                        {sub.name}
+                        {sub.isTrial && (
+                          <span className="ml-2 text-[10px] font-mono bg-white/6
+                                           text-white/30 px-1.5 py-0.5 rounded">
+                            trial
+                          </span>
+                        )}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-white/80">
-                      {sub.name}
-                      {sub.isTrial && (
-                        <span className="ml-2 text-[10px] font-mono bg-white/6 
-                                         text-white/30 px-1.5 py-0.5 rounded">
-                          trial
-                        </span>
-                      )}
+
+                  <div className="flex items-center gap-3">
+                    <DaysBadge days={days} />
+                    <p className="text-sm font-mono font-semibold text-white/70 w-16 text-right">
+                      ₹{sub.amount}
                     </p>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <DaysBadge days={days} />
-                  <p className="text-sm font-mono font-semibold text-white/70 w-16 text-right">
-                    ₹{sub.amount}
-                  </p>
-                </div>
+                </Link>
               </li>
             );
           })}

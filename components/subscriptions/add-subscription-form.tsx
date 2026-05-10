@@ -66,7 +66,7 @@ export function AddSubscriptionForm() {
               type="number"
               required
               min="0"
-              step="0.01"
+              step="any"
               placeholder="649"
               className={`${inputClass} col-span-2 border-r-0`}
             />
