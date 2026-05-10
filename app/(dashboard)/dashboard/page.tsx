@@ -1,14 +1,6 @@
-// app/(dashboard)/dashboard/page.tsx
-// This is an ASYNC Server Component.
-// "async" means we can use "await" directly in the component —
-// Next.js will wait for the data before rendering the HTML.
-// No useEffect, no loading spinners, no client-side fetch needed.
-// The data arrives WITH the page. This is called Server-Side Rendering (SSR).
-
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import type { Subscription } from "@prisma/client";
 import { BurnRateCards } from "@/components/dashboard/burn-rate-cards";
 import { UpcomingBills } from "@/components/dashboard/upcoming-bills";
 import { CategoryBreakdown } from "@/components/dashboard/category-breakdown";
@@ -18,21 +10,12 @@ export default async function DashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  // Direct database query — no API route needed!
-  // This runs on the server, so it's safe to query the DB directly.
-  // The user can never see or tamper with this code.
   const subscriptions = await db.subscription.findMany({
-    where: {
-      userId: session.user!.id,
-      isActive: true,
-    },
-    orderBy: {
-      nextBillingDate: "asc", // Soonest bills first
-    },
+    where: { userId: session.user!.id, isActive: true },
+    orderBy: { nextBillingDate: "asc" },
   });
 
-  // Calculate burn rates on the server before sending to client
-  const monthlyTotal = subscriptions.reduce((sum: number, sub: Subscription) => {
+  const monthlyTotal = subscriptions.reduce((sum: number, sub: any) => {
     if (sub.billingCycle === "monthly") return sum + sub.amount;
     if (sub.billingCycle === "yearly") return sum + sub.amount / 12;
     return sum;
@@ -40,51 +23,104 @@ export default async function DashboardPage() {
 
   const annualTotal = monthlyTotal * 12;
 
-  // Subscriptions due in the next 7 days
   const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const upcoming = subscriptions.filter(
-    (sub: Subscription) => sub.nextBillingDate <= sevenDaysFromNow
+    (sub: any) => new Date(sub.nextBillingDate) <= sevenDaysFromNow
   );
 
-  // Group by category for breakdown
-  const byCategory = subscriptions.reduce((acc: Record<string, number>, sub: Subscription) => {
-    acc[sub.category] = (acc[sub.category] || 0) + sub.amount;
-    return acc;
-  }, {} as Record<string, number>);
+  const byCategory = subscriptions.reduce(
+    (acc: Record<string, number>, sub: any) => {
+      const monthlyAmount =
+        sub.billingCycle === "yearly"
+          ? sub.amount / 12
+          : sub.billingCycle === "weekly"
+            ? (sub.amount * 52) / 12
+            : sub.amount;
+      acc[sub.category] = (acc[sub.category] || 0) + monthlyAmount;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">
-            Hey, {session.user?.name?.split(" ")[0]} 👋
-          </h1>
-          <p className="text-sm text-gray-500">
-            Here&apos;s your subscription overview
-          </p>
-        </div>
-        <Link href="/subscriptions/new" className="bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-          +Add
-        </Link>
+    <main className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-[#c8ff00] selection:text-black">
+      {/* Brutalist Grid Overlay - decorative */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.02]">
+        <div
+          className="w-full h-full"
+          style={{
+            backgroundImage: `
+            linear-gradient(to right, white 1px, transparent 1px),
+            linear-gradient(to bottom, white 1px, transparent 1px)
+          `,
+            backgroundSize: "80px 80px",
+          }}
+        />
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
-        {/* Burn Rate Cards */}
+      {/* Header - Editorial Style */}
+      <header className="relative z-10 px-6 md:px-12 pt-8 pb-12 border-b border-white/5">
+        <div className="flex items-end justify-between">
+          <div className="space-y-1">
+            <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.3em]">
+              SubTrack / Dashboard
+            </p>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-[-0.04em] text-white">
+              {session.user?.name?.split(" ")[0] || "Your"}&apos;s
+              <br />
+              <span className="text-white/40">Burn Rate</span>
+            </h1>
+          </div>
+
+          <Link
+            href="/subscriptions/new"
+            className="group relative flex items-center gap-3 bg-[#c8ff00] text-black 
+                       text-sm font-bold uppercase tracking-widest px-6 py-4
+                       hover:bg-white transition-all duration-300
+                       before:absolute before:inset-0 before:border-2 before:border-[#c8ff00]
+                       before:translate-x-1 before:translate-y-1 before:-z-10
+                       hover:before:translate-x-2 hover:before:translate-y-2
+                       before:transition-transform before:duration-300"
+          >
+            <svg
+              className="w-4 h-4 transition-transform group-hover:rotate-90 duration-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Add New
+          </Link>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="relative z-10 px-6 md:px-12 py-12 space-y-16">
+        {/* Hero: Burn Rate Numbers */}
         <BurnRateCards
           monthlyTotal={monthlyTotal}
           annualTotal={annualTotal}
           totalCount={subscriptions.length}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Upcoming Bills */}
+        {/* Two Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           <UpcomingBills subscriptions={upcoming} />
-
-          {/* Category Breakdown */}
-          <CategoryBreakdown byCategory={byCategory} />
+          <CategoryBreakdown
+            byCategory={byCategory}
+            monthlyTotal={monthlyTotal}
+          />
         </div>
       </div>
+
+      {/* Footer Accent Line */}
+      <div className="fixed bottom-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-[#c8ff00] to-transparent opacity-20" />
     </main>
   );
 }
