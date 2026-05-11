@@ -69,7 +69,7 @@ export function AnalyticsCharts({
   );
 
   return (
-    <div className="px-8 py-8 space-y-12">
+    <div className="px-4 sm:px-8 py-8 space-y-12">
 
       {/* ── SECTION A: ACTIVE BURN ── */}
       <div>
@@ -96,7 +96,7 @@ export function AnalyticsCharts({
 
         <div className="space-y-6">
           {/* Trend line */}
-          <div className="bg-white/3 border border-white/7 p-6">
+          <div className="bg-white/3 border border-white/7 p-4 sm:p-6">
             <SectionLabel num="01" title="Monthly Spend — Last 6 Months" />
             <ResponsiveContainer width="100%" height={200}>
               <LineChart
@@ -137,7 +137,7 @@ export function AnalyticsCharts({
                   No active subscriptions
                 </p>
               ) : (
-                <div className="flex items-center gap-6">
+                <div className="flex fex-col sm:flex-row items-center gap-6">
                   <PieChart width={140} height={140}>
                     <Pie
                       data={pieData}
@@ -156,7 +156,7 @@ export function AnalyticsCharts({
                       ))}
                     </Pie>
                   </PieChart>
-                  <ul className="space-y-2 flex-1">
+                  <ul className="space-y-2 w-full">
                     {categoryEntries.map(([cat, amount]) => (
                       <li key={cat} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">

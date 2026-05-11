@@ -38,8 +38,8 @@ function GlitchText({ text }: { text: string }) {
   useEffect(() => {
     const interval = setInterval(() => {
       setGlitch(true);
-      setTimeout(() => setGlitch(false), 100);
-    }, 3000);
+      setTimeout(() => setGlitch(false), 200);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -64,13 +64,23 @@ export default function LoginPage() {
   const [isHovering, setIsHovering] = useState(false);
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex">
+    <main className="min-h-screen bg-[#0a0a0a] flex flex-col lg:flex-row">
       {/* Left Panel - Interactive Visual */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+      <div className="h-80 lg:h-auto lg:w-1/2 relative overflow-hidden shrink-0">
         <div className="absolute inset-0 p-8">
           <AnimatedGrid />
         </div>
         
+        {/* Brand Mark */}
+        <div className="absolute top-8 left-8">
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 bg-[#c8ff00]" />
+            <span className="text-[11px] uppercase tracking-[0.4em] text-white/60">
+              SubTrack
+            </span>
+          </div>
+        </div>
+
         {/* Floating Stats */}
         <div className="absolute bottom-8 left-8 right-8 space-y-4">
           <div className="border border-[#c8ff00]/20 bg-[#0a0a0a]/80 backdrop-blur-sm p-6">
@@ -90,20 +100,10 @@ export default function LoginPage() {
             </p>
           </div>
         </div>
-
-        {/* Brand Mark */}
-        <div className="absolute top-8 left-8">
-          <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-[#c8ff00]" />
-            <span className="text-[11px] uppercase tracking-[0.4em] text-white/60">
-              SubTrack
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* Right Panel - Login */}
-      <div className="flex-1 flex flex-col justify-between p-8 lg:p-16">
+      <div className="flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-16">
         {/* Mobile Brand */}
         <div className="lg:hidden flex items-center gap-3 mb-12">
           <div className="w-3 h-3 bg-[#c8ff00]" />

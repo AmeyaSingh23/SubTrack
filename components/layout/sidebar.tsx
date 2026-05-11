@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 
-// Icons
 function DashboardIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -48,21 +47,31 @@ function RemindersIcon() {
   );
 }
 
-function SettingsIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
 function LogoutIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
       <polyline points="16 17 21 12 16 7" />
       <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
 }
@@ -89,75 +98,56 @@ function SidebarItem({
   icon: Icon,
   isActive,
   collapsed,
+  onClick,
 }: {
   href: string;
   label: string;
   icon: React.ComponentType;
   isActive: boolean;
   collapsed: boolean;
+  onClick?: () => void;
 }) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={`
         group relative flex items-center gap-3 px-3 h-10 rounded-lg
         transition-all duration-200 ease-out
-        ${isActive
-          ? "bg-white/8 text-white"
-          : "text-white/40 hover:text-white/90 hover:bg-white/4"
-        }
+        ${isActive ? "bg-white/8 text-white" : "text-white/40 hover:text-white/90 hover:bg-white/4"}
         ${collapsed ? "justify-center px-0" : ""}
       `}
     >
-      {/* Active indicator glow */}
       {isActive && (
         <div className="absolute inset-0 rounded-lg bg-linear-to-r from-white/6 to-transparent opacity-60" />
       )}
-      
-      {/* Left accent bar for active state */}
-      <div
-        className={`
-          absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full
-          bg-white transition-all duration-200
-          ${isActive ? "opacity-100" : "opacity-0"}
-        `}
-      />
-
+      <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-white transition-all duration-200 ${isActive ? "opacity-100" : "opacity-0"}`} />
       <span className={`relative flex items-center justify-center w-5 h-5 shrink-0 ${collapsed ? "" : "ml-1"}`}>
         <Icon />
       </span>
-
-      <span
-        className={`
-          relative text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap
-          transition-all duration-200 ease-out
-          ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}
-        `}
-      >
+      <span className={`relative text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap transition-all duration-200 ease-out ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
         {label}
       </span>
     </Link>
   );
 }
 
-export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+function SidebarContent({
+  collapsed,
+  setCollapsed,
+  onNavClick,
+}: {
+  collapsed: boolean;
+  setCollapsed: (v: boolean) => void;
+  onNavClick?: () => void;
+}) {
   const pathname = usePathname();
   const { data: session } = useSession();
 
   return (
-    <aside
-      className={`
-        relative flex flex-col h-full shrink-0
-        bg-[#0a0a0a] border-r border-white/6
-        transition-all duration-300 ease-out
-        ${collapsed ? "w-16" : "w-60"}
-      `}
-    >
-      {/* Subtle gradient overlay */}
+    <div className="flex flex-col h-full">
       <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent pointer-events-none" />
 
-      {/* Navigation */}
       <nav className="relative flex-1 px-3 py-2">
         <div className="space-y-1">
           {navItems.map(({ href, label, icon }) => {
@@ -170,47 +160,33 @@ export function Sidebar() {
                 icon={icon}
                 isActive={isActive}
                 collapsed={collapsed}
+                onClick={onNavClick}
               />
             );
           })}
         </div>
       </nav>
 
-      {/* Footer */}
       <div className="relative px-3 py-4 border-t border-white/4">
-        {/* Status indicator */}
         <div className={`flex items-center gap-2 mb-4 px-3 ${collapsed ? "justify-center px-0" : ""}`}>
           <div className="relative">
             <div className="w-2 h-2 rounded-full bg-emerald-500" />
             <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-500 animate-ping opacity-40" />
           </div>
-          <span
-            className={`
-              text-[11px] font-medium text-white/30 uppercase tracking-wider
-              transition-all duration-300
-              ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}
-            `}
-          >
+          <span className={`text-[11px] font-medium text-white/30 uppercase tracking-wider transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
             System Active
           </span>
         </div>
 
         <Link
           href="/profile"
-          className={`group flex items-center gap-3 w-full h-10 rounded-lg
-                    text-white/90 hover:bg-white/4
-                      transition-colors duration-200 ease-out
-                      ${collapsed ? "justify-center px-0" : "px-3"}`}
+          onClick={onNavClick}
+          className={`group flex items-center gap-3 w-full h-10 rounded-lg text-white/90 hover:bg-white/4 transition-colors duration-200 ease-out ${collapsed ? "justify-center px-0" : "px-3"}`}
         >
-          {/* User section */}
-          <div className={`flex items-center gap-3 py-2 rounded-lg w-full ${collapsed ? "justify-center px-3" : ""}`}>
+          <div className={`flex items-center gap-3 py-2 rounded-lg w-full ${collapsed ? "justify-center" : ""}`}>
             <div className="w-7 h-7 rounded-full overflow-hidden bg-linear-to-br from-violet-500/80 to-indigo-600/80 flex items-center justify-center shrink-0">
               {session?.user?.image ? (
-                <img
-                  src={session.user.image}
-                  alt={session.user.name ?? "User"}
-                  className="w-full h-full object-cover"
-                />
+                <img src={session.user.image} alt={session.user.name ?? "User"} className="w-full h-full object-cover" />
               ) : (
                 <span className="text-[11px] font-semibold text-white">
                   {session?.user?.name?.charAt(0).toUpperCase() || "U"}
@@ -218,66 +194,103 @@ export function Sidebar() {
               )}
             </div>
             <div className={`flex flex-col transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
-              <span className="text-[13px] font-medium text-white/90 whitespace-nowrap">{session?.user?.name || "User"}</span>
+              <span className="text-[13px] font-medium text-white/90 whitespace-nowrap">
+                {session?.user?.name?.split(" ")[0] || "User"}
+              </span>
             </div>
           </div>
         </Link>
 
-        {/* Sign out */}
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className={`
-            group flex items-center gap-3 w-full px-3 h-10 rounded-lg
-            text-white/40 hover:text-white/90 hover:bg-white/4
-            transition-all duration-200 ease-out
-            ${collapsed ? "justify-center px-0" : ""}
-          `}
+          className={`group flex items-center gap-3 w-full px-3 h-10 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/4 transition-all duration-200 ease-out ${collapsed ? "justify-center px-0" : ""}`}
         >
-          <span className="flex items-center justify-center w-5 h-5 shrink-0">
-            <LogoutIcon />
-          </span>
-          <span
-            className={`
-              text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap
-              transition-all duration-300
-              ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}
-            `}
-          >
+          <span className="flex items-center justify-center w-5 h-5 shrink-0"><LogoutIcon /></span>
+          <span className={`text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
             Sign out
           </span>
         </button>
 
-        {/* Collapse toggle */}
+        {/* Collapse — desktop only */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className={`
-            group flex items-center gap-3 w-full px-3 h-10 rounded-lg mt-1
-            text-white/30 hover:text-white/60 hover:bg-white/4
-            transition-all duration-200 ease-out
-            ${collapsed ? "justify-center px-0" : ""}
-          `}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className={`group hidden md:flex items-center gap-3 w-full px-3 h-10 rounded-lg mt-1 text-white/30 hover:text-white/60 hover:bg-white/4 transition-all duration-200 ease-out ${collapsed ? "justify-center px-0" : ""}`}
         >
-          <span
-            className={`
-              flex items-center justify-center w-5 h-5 shrink-0
-              transition-transform duration-300 ease-out
-              ${collapsed ? "rotate-180" : "rotate-0"}
-            `}
-          >
+          <span className={`flex items-center justify-center w-5 h-5 shrink-0 transition-transform duration-300 ease-out ${collapsed ? "rotate-180" : "rotate-0"}`}>
             <CollapseIcon />
           </span>
-          <span
-            className={`
-              text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap
-              transition-all duration-300
-              ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}
-            `}
-          >
+          <span className={`text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
             Collapse
           </span>
         </button>
       </div>
-    </aside>
+    </div>
+  );
+}
+
+export function Sidebar() {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  return (
+    <>
+      {/* ── MOBILE: hamburger button fixed to top-left ── */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#0a0a0a] border border-white/10 text-white/60 hover:text-white transition-colors"
+        aria-label="Open menu"
+      >
+        <MenuIcon />
+      </button>
+
+      {/* ── MOBILE: overlay backdrop ── */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* ── MOBILE: slide-in sidebar ── */}
+      <aside
+        className={`
+          md:hidden fixed top-0 left-0 z-50 h-full w-64
+          bg-[#0a0a0a] border-r border-white/6
+          transition-transform duration-300 ease-out
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        {/* Close button */}
+        <button
+          onClick={() => setMobileOpen(false)}
+          className="absolute top-4 right-4 p-1.5 text-white/40 hover:text-white transition-colors"
+        >
+          <CloseIcon />
+        </button>
+        <SidebarContent
+          collapsed={false}
+          setCollapsed={setCollapsed}
+          onNavClick={() => setMobileOpen(false)}
+        />
+      </aside>
+
+      {/* ── DESKTOP: regular sidebar ── */}
+      <aside
+        className={`
+          hidden md:flex flex-col h-full shrink-0
+          bg-[#0a0a0a] border-r border-white/6
+          transition-all duration-300 ease-out
+          ${collapsed ? "w-16" : "w-60"}
+        `}
+      >
+        <SidebarContent collapsed={collapsed} setCollapsed={setCollapsed} />
+      </aside>
+    </>
   );
 }

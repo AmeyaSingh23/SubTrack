@@ -3,7 +3,7 @@ import { AddSubscriptionForm } from "@/components/subscriptions/add-subscription
 export default function NewSubscriptionPage() {
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="max-w-lg mx-auto px-8 py-12">
+      <div className="max-w-lg mx-auto px-4 sm:px-8 py-12">
         <div className="mb-10">
           <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.3em] mb-3">
             SubTrack / New

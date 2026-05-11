@@ -222,7 +222,7 @@ export function SubscriptionDetailForm({
         <div>
           <FieldLabel number="05" label="Category" />
 
-          <div className="grid grid-cols-3 gap-0">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-0">
             {CATEGORIES.map((cat) => (
               <label
                 key={cat}

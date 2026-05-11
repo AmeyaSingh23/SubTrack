@@ -59,7 +59,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Header - Editorial Style */}
-      <header className="relative z-10 px-6 md:px-12 pt-8 pb-12 border-b border-white/5">
+      <header className="relative z-10 px-4 sm:px-6 md:px-12 pt-8 pb-12 border-b border-white/5">
         <div className="flex items-end justify-between">
           <div className="space-y-1">
             <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.3em]">
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <div className="relative z-10 px-6 md:px-12 py-12 space-y-16">
+      <div className="relative z-10 px-4 sm:px-6 md:px-12 py-12 space-y-16">
         {/* Hero: Burn Rate Numbers */}
         <BurnRateCards
           monthlyTotal={monthlyTotal}

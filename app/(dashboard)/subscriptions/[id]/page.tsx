@@ -33,7 +33,7 @@ export default async function SubscriptionDetailPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="max-w-xl mx-auto px-8 py-12">
+      <div className="max-w-xl mx-auto px-4 sm:px-8 py-12">
         {/* Header */}
         <div className="mb-10">
           <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.4em] mb-3">

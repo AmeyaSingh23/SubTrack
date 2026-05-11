@@ -27,7 +27,7 @@ export function BurnRateCards({ monthlyTotal, annualTotal, totalCount }: Props) 
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {cards.map((card) => (
         <div
           key={card.label}
@@ -41,7 +41,7 @@ export function BurnRateCards({ monthlyTotal, annualTotal, totalCount }: Props) 
           <p className="text-[11px] font-mono text-white/30 uppercase tracking-widest mb-3">
             {card.label}
           </p>
-          <p className="text-3xl font-mono font-semibold text-white tracking-tight">
+          <p className="text-2xl sm:text-3xl font-mono font-semibold text-white tracking-tight">
             {card.value}
           </p>
           <p className="text-[11px] text-white/20 mt-1.5 font-mono">

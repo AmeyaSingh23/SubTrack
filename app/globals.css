@@ -17,3 +17,7 @@
 .animate-scroll-down {
   animation: scroll-down 30s linear infinite;
 }
+
+body {
+  background-color: #0a0a0a;
+}
