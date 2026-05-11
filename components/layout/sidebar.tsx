@@ -148,7 +148,7 @@ export function Sidebar() {
   return (
     <aside
       className={`
-        relative flex flex-col h-screen shrink-0
+        relative flex flex-col h-full shrink-0
         bg-[#0a0a0a] border-r border-white/6
         transition-all duration-300 ease-out
         ${collapsed ? "w-16" : "w-60"}
@@ -156,28 +156,6 @@ export function Sidebar() {
     >
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent pointer-events-none" />
-
-      {/* Header */}
-      <div className={`relative flex items-center h-16 px-4 ${collapsed ? "justify-center" : ""}`}>
-        <div className={`flex items-center gap-3 overflow-hidden transition-all duration-300 ${collapsed ? "w-8" : "w-full"}`}>
-          {/* Logo mark */}
-          <div className="relative w-8 h-8 rounded-lg bg-linear-to-br from-white/90 to-white/70 flex items-center justify-center shrink-0 shadow-lg shadow-white/3">
-            <span className="text-sm font-bold text-[#0a0a0a] tracking-tight">S</span>
-            {/* Subtle shine */}
-            <div className="absolute inset-0 rounded-lg bg-linear-to-br from-white/20 to-transparent" />
-          </div>
-
-          {/* Brand text */}
-          <div className={`flex flex-col transition-all duration-300 ${collapsed ? "w-0 opacity-0" : "w-auto opacity-100"}`}>
-            <span className="text-[15px] font-semibold text-white tracking-[-0.02em] whitespace-nowrap">
-              SubTrack
-            </span>
-            <span className="text-[10px] font-medium text-white/30 tracking-[0.02em] uppercase whitespace-nowrap">
-              Finance OS
-            </span>
-          </div>
-        </div>
-      </div>
 
       {/* Navigation */}
       <nav className="relative flex-1 px-3 py-2">
@@ -217,25 +195,33 @@ export function Sidebar() {
           </span>
         </div>
 
-        {/* User section */}
-        <div className={`flex items-center gap-3 px-3 py-2 rounded-lg bg-white/2 mb-2 ${collapsed ? "justify-center px-2" : ""}`}>
-          <div className="w-7 h-7 rounded-full overflow-hidden bg-linear-to-br from-violet-500/80 to-indigo-600/80 flex items-center justify-center shrink-0">
-            {session?.user?.image ? (
-              <img
-                src={session.user.image}
-                alt={session.user.name ?? "User"}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-[11px] font-semibold text-white">
-                {session?.user?.name?.charAt(0).toUpperCase() || "U"}
-              </span>
-            )}
+        <Link
+          href="/profile"
+          className={`group flex items-center gap-3 w-full h-10 rounded-lg
+                    text-white/90 hover:bg-white/4
+                      transition-colors duration-200 ease-out
+                      ${collapsed ? "justify-center px-0" : "px-3"}`}
+        >
+          {/* User section */}
+          <div className={`flex items-center gap-3 py-2 rounded-lg w-full ${collapsed ? "justify-center px-3" : ""}`}>
+            <div className="w-7 h-7 rounded-full overflow-hidden bg-linear-to-br from-violet-500/80 to-indigo-600/80 flex items-center justify-center shrink-0">
+              {session?.user?.image ? (
+                <img
+                  src={session.user.image}
+                  alt={session.user.name ?? "User"}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-[11px] font-semibold text-white">
+                  {session?.user?.name?.charAt(0).toUpperCase() || "U"}
+                </span>
+              )}
+            </div>
+            <div className={`flex flex-col transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
+              <span className="text-[13px] font-medium text-white/90 whitespace-nowrap">{session?.user?.name || "User"}</span>
+            </div>
           </div>
-          <div className={`flex flex-col transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
-            <span className="text-[13px] font-medium text-white/90 whitespace-nowrap">{session?.user?.name || "User"}</span>
-          </div>
-        </div>
+        </Link>
 
         {/* Sign out */}
         <button

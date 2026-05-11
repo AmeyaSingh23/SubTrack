@@ -7,14 +7,16 @@ export default async function AnalyticsPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const subscriptions = await db.subscription.findMany({
+  const allSubscriptions = await db.subscription.findMany({
     where: { userId: session.user!.id },
     orderBy: { createdAt: "asc" },
   });
 
-  const byCategory = subscriptions
-    .filter((s: any) => s.isActive)
-    .reduce((acc: Record<string, number>, sub: any) => {
+  const activeSubscriptions = allSubscriptions.filter((s: any) => s.isActive);
+
+  // Active monthly burn — what you're paying RIGHT NOW
+  const activeByCategoryMonthly = activeSubscriptions.reduce(
+    (acc: Record<string, number>, sub: any) => {
       const monthly =
         sub.billingCycle === "yearly"
           ? sub.amount / 12
@@ -23,17 +25,26 @@ export default async function AnalyticsPage() {
           : sub.amount;
       acc[sub.category] = (acc[sub.category] || 0) + monthly;
       return acc;
-    }, {});
+    },
+    {}
+  );
 
+  const totalMonthly = Object.values(activeByCategoryMonthly).reduce(
+    (a: number, b: number) => a + b,
+    0
+  );
+
+  // Monthly trend — last 6 months (active subs only)
   const now = new Date();
   const monthlyTrend = Array.from({ length: 6 }, (_, i) => {
     const date = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
-    const label = date.toLocaleDateString("en-IN", { month: "short", year: "2-digit" });
-    const total = subscriptions
-      .filter((sub: any) => {
-        const created = new Date(sub.createdAt);
-        return created <= new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      })
+    const label = date.toLocaleDateString("en-IN", {
+      month: "short",
+      year: "2-digit",
+    });
+    const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const total = activeSubscriptions
+      .filter((sub: any) => new Date(sub.createdAt) <= endOfMonth)
       .reduce((sum: number, sub: any) => {
         const monthly =
           sub.billingCycle === "yearly"
@@ -46,8 +57,8 @@ export default async function AnalyticsPage() {
     return { month: label, total: Math.round(total) };
   });
 
-  const topSubs = [...subscriptions]
-    .filter((s: any) => s.isActive)
+  // Top active subscriptions by monthly cost
+  const topSubs = [...activeSubscriptions]
     .map((sub: any) => ({
       name: sub.name,
       monthly:
@@ -62,10 +73,62 @@ export default async function AnalyticsPage() {
     .sort((a, b) => b.monthly - a.monthly)
     .slice(0, 5);
 
-  const totalMonthly = Object.values(byCategory).reduce(
+  // Historical spend — ALL subs ever, calculate total ever paid
+  // Logic: from createdAt to either now (if active) or updatedAt (if cancelled)
+  // We estimate months active * monthly cost
+  const historicalByCategory = allSubscriptions.reduce(
+    (acc: Record<string, number>, sub: any) => {
+      const start = new Date(sub.createdAt);
+      const end = sub.isActive ? now : new Date(sub.updatedAt);
+      const monthsActive = Math.max(
+        1,
+        Math.round(
+          (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30)
+        )
+      );
+      const monthly =
+        sub.billingCycle === "yearly"
+          ? sub.amount / 12
+          : sub.billingCycle === "weekly"
+          ? (sub.amount * 52) / 12
+          : sub.amount;
+      acc[sub.category] = (acc[sub.category] || 0) + monthly * monthsActive;
+      return acc;
+    },
+    {}
+  );
+
+  const totalHistorical = Object.values(historicalByCategory).reduce(
     (a: number, b: number) => a + b,
     0
   );
+
+  // Cancelled subs list for historical section
+  const cancelledSubs = allSubscriptions
+    .filter((s: any) => !s.isActive)
+    .map((sub: any) => {
+      const start = new Date(sub.createdAt);
+      const end = new Date(sub.updatedAt);
+      const monthsActive = Math.max(
+        1,
+        Math.round(
+          (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30)
+        )
+      );
+      const monthly =
+        sub.billingCycle === "yearly"
+          ? sub.amount / 12
+          : sub.billingCycle === "weekly"
+          ? (sub.amount * 52) / 12
+          : sub.amount;
+      return {
+        name: sub.name,
+        category: sub.category,
+        monthsActive,
+        totalSpent: Math.round(monthly * monthsActive),
+      };
+    })
+    .sort((a, b) => b.totalSpent - a.totalSpent);
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
@@ -79,10 +142,13 @@ export default async function AnalyticsPage() {
       </div>
 
       <AnalyticsCharts
-        byCategory={byCategory}
+        byCategory={activeByCategoryMonthly}
         monthlyTrend={monthlyTrend}
         topSubs={topSubs}
         totalMonthly={totalMonthly}
+        historicalByCategory={historicalByCategory}
+        totalHistorical={totalHistorical}
+        cancelledSubs={cancelledSubs}
       />
     </main>
   );

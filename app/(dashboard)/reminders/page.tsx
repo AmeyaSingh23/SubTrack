@@ -26,7 +26,7 @@ export default async function RemindersPage() {
         </p>
       </div>
 
-      <div className="px-8 py-8 max-w-2xl">
+      <div className="px-8 py-8">
         {logs.length === 0 ? (
           <div className="border border-white/6 p-12 text-center">
             <p className="font-mono text-[11px] text-white/20 uppercase tracking-widest">
