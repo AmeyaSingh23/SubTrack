@@ -28,15 +28,6 @@ const STATS = [
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden">
-
-      {/* Decorative grid */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015]"
-        style={{
-          backgroundImage: `linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)`,
-          backgroundSize: "80px 80px",
-        }}
-      />
-
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6 border-b border-white/6">
         <div className="flex items-center gap-3">
@@ -120,7 +111,7 @@ export default function HomePage() {
           </p>
           <p className="text-2xl md:text-4xl font-bold tracking-[-0.02em] leading-tight text-white/80">
             The average person has{" "}
-            <span className="text-white">12 active subscriptions</span> and can
+            <span className="text-white">nearly a dozen active subscriptions</span> and can
             only recall <span className="text-[#c8ff00]">half of them</span>.
             The rest quietly drain accounts every month.
           </p>

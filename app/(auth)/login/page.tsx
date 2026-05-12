@@ -80,26 +80,6 @@ export default function LoginPage() {
             </span>
           </div>
         </div>
-
-        {/* Floating Stats */}
-        <div className="absolute bottom-8 left-8 right-8 space-y-4">
-          <div className="border border-[#c8ff00]/20 bg-[#0a0a0a]/80 backdrop-blur-sm p-6">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-[#c8ff00]/60 mb-2">
-              Active Users
-            </p>
-            <p className="text-4xl font-light text-white tabular-nums">
-              12,847
-            </p>
-          </div>
-          <div className="border border-white/8 bg-[#0a0a0a]/80 backdrop-blur-sm p-6">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-white/40 mb-2">
-              Subscriptions Tracked
-            </p>
-            <p className="text-4xl font-light text-white/60 tabular-nums">
-              $2.4M
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Right Panel - Login */}
@@ -160,6 +140,9 @@ export default function LoginPage() {
 
           <p className="text-[11px] text-white/20 mt-6 uppercase tracking-[0.2em]">
             First time? Your account is created automatically.
+          </p>
+          <p className="text-[11px] text-white/10 mt-2 uppercase tracking-[0.2em]">
+            Join thousands tracking smarter.
           </p>
         </div>
 

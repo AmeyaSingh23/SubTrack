@@ -44,20 +44,6 @@ export default async function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-[#c8ff00] selection:text-black">
-      {/* Brutalist Grid Overlay - decorative */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.02]">
-        <div
-          className="w-full h-full"
-          style={{
-            backgroundImage: `
-            linear-gradient(to right, white 1px, transparent 1px),
-            linear-gradient(to bottom, white 1px, transparent 1px)
-          `,
-            backgroundSize: "80px 80px",
-          }}
-        />
-      </div>
-
       {/* Header - Editorial Style */}
       <header className="relative z-10 px-4 sm:px-6 md:px-12 pt-8 pb-12 border-b border-white/5">
         <div className="flex items-end justify-between">
