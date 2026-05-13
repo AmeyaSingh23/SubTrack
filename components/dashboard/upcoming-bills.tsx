@@ -1,4 +1,3 @@
-// components/dashboard/upcoming-bills.tsx
 import Link from "next/link";
 
 type Subscription = {

@@ -1,8 +1,7 @@
 // middleware.ts
 // Next.js middleware runs BEFORE a request reaches your page or API route.
 // It's like a security checkpoint at the entrance of a building.
-//
-// INTERVIEW CONCEPT: Middleware runs on the "Edge Runtime" — a lightweight
+// Middleware runs on the "Edge Runtime" — a lightweight
 // environment that runs geographically close to the user (not on your main
 // server). This makes auth checks extremely fast because the user gets
 // redirected BEFORE any database queries or page rendering happens.

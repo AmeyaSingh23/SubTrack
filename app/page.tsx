@@ -1,4 +1,3 @@
-// app/page.tsx
 import Link from "next/link";
 
 const FEATURES = [
@@ -185,7 +184,7 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-white/20">SubTrack</span>
             <span className="font-mono text-[10px] text-white/10">—</span>
-            <span className="font-mono text-[10px] text-white/10 uppercase tracking-widest">
+            <span suppressHydrationWarning className="font-mono text-[10px] text-white/10 uppercase tracking-widest">
               {new Date().getFullYear()}
             </span>
           </div>

@@ -1,4 +1,3 @@
-// lib/email.ts
 // This file contains all email-related logic.
 // Nodemailer is a Node.js library that sends emails via SMTP.
 // SMTP (Simple Mail Transfer Protocol) is the standard protocol

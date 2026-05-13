@@ -1,4 +1,3 @@
-// app/actions/subscriptions.ts
 "use server";
 // ↑ This directive tells Next.js: "every function exported from this
 // file runs on the server only." The client never sees this code.
@@ -65,8 +64,6 @@ export async function createSubscription(
   // Step 6: Redirect back to dashboard
   redirect("/dashboard");
 }
-
-// Add these to the BOTTOM of app/actions/subscriptions.ts
 
 export async function updateSubscription(id: string, previousState: unknown, formData: FormData) {
   "use server";

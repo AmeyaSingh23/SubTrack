@@ -1,10 +1,8 @@
-// app/actions/profile.ts
 "use server";
 
 import { auth, signOut } from "@/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export async function updateUserName(name: string) {
   const session = await auth();

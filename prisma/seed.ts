@@ -1,7 +1,6 @@
-// prisma/seed.ts
 // A seed script populates your database with fake data for development.
-// It runs once manually — it's NOT part of your app.
-// Replace the userId with YOUR actual user ID from Prisma Studio.
+// It runs once manually — it's NOT part of the app.
+// Replace the userId with actual user ID from Prisma Studio.
 
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
@@ -11,9 +10,9 @@ const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
 const db = new PrismaClient({ adapter });
 
 async function main() {
-  // ⚠️ IMPORTANT: Replace this with your actual user ID from Prisma Studio
+  // ⚠️ IMPORTANT: Replace this with actual user ID from Prisma Studio
   // Open Prisma Studio → User table → copy the "id" value of your user
-  const YOUR_USER_ID = "cmou4q5zm0000hsu4n0ksrxhz";
+  const YOUR_USER_ID = "PASTE_YOUR_USER_ID_HERE";
 
   // Delete existing subscriptions for a clean seed
   await db.subscription.deleteMany({ where: { userId: YOUR_USER_ID } });

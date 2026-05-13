@@ -1,4 +1,3 @@
-// components/subscriptions/subscriptions-list.tsx
 "use client";
 // Needs "use client" because filters are interactive state
 

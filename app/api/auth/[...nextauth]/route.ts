@@ -1,5 +1,3 @@
-// app/api/auth/[...nextauth]/route.ts
-
 // This is a Next.js API Route.
 // The [...nextauth] folder name is a "catch-all segment" — it means
 // this single file handles ALL of these URLs:

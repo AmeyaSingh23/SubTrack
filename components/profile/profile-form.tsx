@@ -1,4 +1,3 @@
-// components/profile/profile-form.tsx
 "use client";
 
 import { useState, useTransition } from "react";
@@ -159,6 +158,7 @@ export function ProfileForm({ user, monthlyTotal }: Props) {
             <input
               type="email"
               value={user.email ?? ""}
+              readOnly
               disabled
               className={`${inputClass} opacity-30 cursor-not-allowed`}
             />

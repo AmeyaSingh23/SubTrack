@@ -1,4 +1,3 @@
-// app/(dashboard)/subscriptions/page.tsx
 // This is the "all subscriptions" page.
 // It fetches all subs server-side and passes them to a client
 // component that handles the filter sidebar interactivity.

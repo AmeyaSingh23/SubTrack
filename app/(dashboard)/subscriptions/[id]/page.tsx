@@ -1,4 +1,3 @@
-// app/(dashboard)/subscriptions/[id]/page.tsx
 // [id] is a dynamic segment — Next.js passes it as a prop called "params"
 // So /subscriptions/abc123 → params.id === "abc123"
 // This is a Server Component — it fetches the subscription and passes
