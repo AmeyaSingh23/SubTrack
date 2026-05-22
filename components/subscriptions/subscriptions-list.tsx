@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ServiceLogo } from "@/components/ui/service-logo";
 
 type Subscription = {
   id: string;
@@ -143,12 +144,7 @@ export function SubscriptionsList({
                                hover:bg-white/2 -mx-4 px-4 transition-colors duration-150"
                   >
                     {/* Initial avatar */}
-                    <div className="w-8 h-8 flex items-center justify-center
-                                    border border-white/10 font-mono text-xs
-                                    text-white/40 group-hover:border-[#c8ff00]/30
-                                    group-hover:text-[#c8ff00] transition-colors shrink-0">
-                      {sub.name[0].toUpperCase()}
-                    </div>
+                    <ServiceLogo name={sub.name} size={32} className="shrink-0" />
 
                     {/* Name + category */}
                     <div className="flex-1 min-w-0">

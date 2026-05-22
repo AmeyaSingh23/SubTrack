@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ServiceLogo } from "@/components/ui/service-logo";
 
 type Subscription = {
   id: string;
@@ -72,10 +73,7 @@ export function UpcomingBills({ subscriptions }: Props) {
                              hover:opacity-70 transition-opacity duration-150"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-md bg-white/6 flex items-center
-                                    justify-center text-[11px] font-mono font-semibold text-white/50">
-                      {sub.name[0].toUpperCase()}
-                    </div>
+                    <ServiceLogo name={sub.name} size={28} className="shrink-0 rounded-md" />
                     <div>
                       <p className="text-sm font-medium text-white/80">
                         {sub.name}

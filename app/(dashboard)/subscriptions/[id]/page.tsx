@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { SubscriptionDetailForm } from "@/components/subscriptions/subscription-detail-form";
+import { ServiceLogo } from "@/components/ui/service-logo";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -38,11 +39,14 @@ export default async function SubscriptionDetailPage({ params }: Props) {
           <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.4em] mb-3">
             SubTrack / Subscriptions / {subscription.name}
           </p>
-          <h1 className="text-4xl font-black tracking-[-0.04em]">
-            {subscription.name}
-            <br />
-            <span className="text-white/20">Details</span>
-          </h1>
+          <div className="flex items-center gap-5">
+            <ServiceLogo name={subscription.name} size={64} className="shrink-0 rounded-xl" />
+            <h1 className="text-4xl font-black tracking-[-0.04em]">
+              {subscription.name}
+              <br />
+              <span className="text-white/20">Details</span>
+            </h1>
+          </div>
         </div>
 
         <SubscriptionDetailForm subscription={subscription} />

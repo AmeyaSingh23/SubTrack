@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { ServiceLogo } from "@/components/ui/service-logo";
 
 export default async function RemindersPage() {
   const session = await auth();
@@ -49,11 +50,7 @@ export default async function RemindersPage() {
                 >
                   <div>
                     <div className="flex items-center gap-3 mb-1">
-                      <div className="w-6 h-6 flex items-center justify-center
-                                      border border-white/8 font-mono text-[10px]
-                                      text-white/30">
-                        {log.subscriptionName[0].toUpperCase()}
-                      </div>
+                      <ServiceLogo name={log.subscriptionName} size={28} className="shrink-0 rounded-md" />
                       <p className="font-bold text-sm text-white/80">
                         {log.subscriptionName}
                       </p>

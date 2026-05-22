@@ -4,6 +4,7 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
+import { ServiceLogo } from "@/components/ui/service-logo";
 
 const COLORS: Record<string, string> = {
   Streaming: "#f59e0b",
@@ -193,6 +194,7 @@ export function AnalyticsCharts({
                         <span className="font-mono text-[10px] text-[#c8ff00] w-4">
                           {String(i + 1).padStart(2, "0")}
                         </span>
+                        <ServiceLogo name={sub.name} size={28} className="shrink-0 rounded-md" />
                         <div>
                           <p className="text-sm font-bold text-white/80">{sub.name}</p>
                           <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest">
@@ -290,11 +292,14 @@ export function AnalyticsCharts({
               <ul className="divide-y divide-white/6">
                 {cancelledSubs.map((sub) => (
                   <li key={sub.name} className="flex items-center justify-between py-3">
-                    <div>
-                      <p className="text-sm font-bold text-white/50">{sub.name}</p>
-                      <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest mt-0.5">
-                        {sub.category} · {sub.monthsActive}mo
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <ServiceLogo name={sub.name} size={28} className="shrink-0 rounded-md opacity-40" />
+                      <div>
+                        <p className="text-sm font-bold text-white/50">{sub.name}</p>
+                        <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest mt-0.5">
+                          {sub.category} · {sub.monthsActive}mo
+                        </p>
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="font-mono text-sm font-bold text-white/40">
