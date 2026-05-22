@@ -31,7 +31,7 @@ export default async function SubscriptionDetailPage({ params }: Props) {
   if (!subscription) notFound();
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="text-white">
       <div className="max-w-xl mx-auto px-4 sm:px-8 py-12">
         {/* Header */}
         <div className="mb-10">
@@ -47,6 +47,6 @@ export default async function SubscriptionDetailPage({ params }: Props) {
 
         <SubscriptionDetailForm subscription={subscription} />
       </div>
-    </main>
+    </div>
   );
 }

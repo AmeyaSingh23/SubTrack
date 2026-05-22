@@ -360,9 +360,11 @@ export function SubscriptionDetailForm({
 
       {/* Delete Section */}
       <div className="border-t border-white/6 pt-8">
-        <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest mb-4">
-          Danger Zone
-        </p>
+        {subscription.isActive && (
+          <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest mb-4">
+            Danger Zone
+          </p>
+        )}
 
         {subscription.isActive && (
             <>
