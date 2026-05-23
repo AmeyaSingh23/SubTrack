@@ -1,20 +1,42 @@
 "use client";
 import { useActionState, useState } from "react";
 import { createSubscription } from "@/app/actions/subscriptions";
+import { matchService, type ServiceEntry } from "@/lib/service-registry";
+import { ServiceLogo } from "@/components/ui/service-logo";
 
 const CATEGORIES = ["Streaming", "Music", "Work", "Utilities", "Health", "Other"];
 const CURRENCIES = ["INR", "USD", "EUR", "GBP"];
 
-function FieldLabel({ number, label, optional }: { number: string; label: string; optional?: boolean }) {
+function FieldLabel({
+  number,
+  label,
+  optional,
+  autoDetected,
+}: {
+  number: string;
+  label: string;
+  optional?: boolean;
+  autoDetected?: boolean;
+}) {
   return (
     <div className="flex items-baseline justify-between mb-2">
       <label className="flex items-baseline gap-2">
         <span className="font-mono text-[10px] text-[#c8ff00] tracking-widest">{number}</span>
         <span className="font-mono text-[11px] text-white/40 uppercase tracking-widest">{label}</span>
       </label>
-      {optional && (
-        <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Optional</span>
-      )}
+      <div className="flex items-center gap-2">
+        {autoDetected && (
+          // This badge appears when the field was filled automatically
+          // from the service registry — tells the user the app did the work
+          <span className="font-mono text-[9px] text-[#c8ff00] uppercase tracking-widest
+                           border border-[#c8ff00]/30 px-1.5 py-0.5">
+            Auto-detected
+          </span>
+        )}
+        {optional && !autoDetected && (
+          <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Optional</span>
+        )}
+      </div>
     </div>
   );
 }
@@ -23,6 +45,14 @@ const inputClass = `
   w-full bg-transparent border border-white/[0.08] text-white font-mono text-sm
   px-4 py-3 outline-none
   focus:border-[#c8ff00]/50 focus:bg-[#c8ff00]/[0.02]
+  placeholder:text-white/20
+  transition-all duration-200
+`;
+
+const inputAutoClass = `
+  w-full bg-[#c8ff00]/[0.03] border border-[#c8ff00]/20 text-white font-mono text-sm
+  px-4 py-3 outline-none
+  focus:border-[#c8ff00]/50
   placeholder:text-white/20
   transition-all duration-200
 `;
@@ -39,25 +69,73 @@ export function AddSubscriptionForm() {
   const [isTrial, setIsTrial] = useState(false);
   const [, formAction, isPending] = useActionState(createSubscription, null);
 
+  // Tracks the auto-detected service match
+  const [detected, setDetected] = useState<ServiceEntry | null>(null);
+  // Tracks what the user typed for the name (to show logo preview)
+  const [nameValue, setNameValue] = useState("");
+
+  // Controlled state for auto-filled fields so they can be overridden by user
+  const [category, setCategory] = useState("");
+  const [billingCycle, setBillingCycle] = useState("monthly");
+  const [cancelUrl, setCancelUrl] = useState("");
+
+  // Tracks which fields the user has manually overridden
+  // Once a field is in here, auto-detection won't touch it again
+  const [manuallySet, setManuallySet] = useState<Set<string>>(new Set());
+
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setNameValue(value);
+
+    const match = matchService(value);
+    if (match) {
+      setDetected(match.entry);
+      // Only auto-fill fields the user hasn't manually touched
+      if (!manuallySet.has("category")) setCategory(match.entry.category);
+      if (!manuallySet.has("billingCycle")) setBillingCycle(match.entry.billingCycle);
+      if (!manuallySet.has("cancelUrl")) setCancelUrl(match.entry.cancelUrl);
+    } else {
+      setDetected(null);
+      // Only clear fields that were auto-detected, not manually set ones
+      if (!manuallySet.has("category")) setCategory("");
+      if (!manuallySet.has("billingCycle")) setBillingCycle("monthly");
+      if (!manuallySet.has("cancelUrl")) setCancelUrl("");
+    }
+  }
+
   return (
     <form action={formAction} className="space-y-0">
-
-      {/* Divider line */}
       <div className="border-t border-white/6 pt-8 space-y-8">
 
-        {/* 01 — Name */}
+        {/* 01 — Name with logo preview */}
         <div>
           <FieldLabel number="01" label="Service Name" />
-          <input
-            name="name"
-            type="text"
-            required
-            placeholder="e.g. Netflix"
-            className={inputClass}
-          />
+          <div className="relative">
+            {/* Logo preview appears inside the input when a match is found */}
+            {detected && (
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
+                <ServiceLogo name={nameValue} size={20} className="rounded-sm" />
+              </div>
+            )}
+            <input
+              name="name"
+              type="text"
+              required
+              placeholder="e.g. Netflix"
+              value={nameValue}
+              onChange={handleNameChange}
+              className={`${detected ? inputAutoClass : inputClass} ${detected ? "pl-10" : ""}`}
+            />
+          </div>
+          {/* Detection confirmation message */}
+          {detected && (
+            <p className="font-mono text-[10px] text-[#c8ff00]/60 mt-1.5 uppercase tracking-widest">
+              ✓ Service recognised — fields auto-filled below
+            </p>
+          )}
         </div>
 
-        {/* 02 — Amount + Currency */}
+        {/* 02 — Amount + Currency (never auto-filled — price varies per plan) */}
         <div>
           <FieldLabel number="02" label="Amount" />
           <div className="grid grid-cols-3 gap-0">
@@ -78,9 +156,9 @@ export function AddSubscriptionForm() {
           </div>
         </div>
 
-        {/* 03 — Billing Cycle */}
+        {/* 03 — Billing Cycle (auto-filled if detected) */}
         <div>
-          <FieldLabel number="03" label="Billing Cycle" />
+          <FieldLabel number="03" label="Billing Cycle" autoDetected={!!detected && !manuallySet.has("billingCycle")} />
           <div className="grid grid-cols-3 gap-0">
             {["monthly", "yearly", "weekly"].map((cycle) => (
               <label
@@ -92,8 +170,13 @@ export function AddSubscriptionForm() {
                   name="billingCycle"
                   value={cycle}
                   required
+                  checked={billingCycle === cycle}
+                  onChange={() => {
+                    setBillingCycle(cycle);
+                    // Mark as manually set so auto-detection won't overwrite it
+                    setManuallySet(prev => new Set(prev).add("billingCycle"));
+                  }}
                   className="peer sr-only"
-                  defaultChecked={cycle === "monthly"}
                 />
                 <span className="w-full text-center font-mono text-[11px] uppercase tracking-widest
                                  border border-white/8 py-3 text-white/30
@@ -117,9 +200,9 @@ export function AddSubscriptionForm() {
           />
         </div>
 
-        {/* 05 — Category */}
+        {/* 05 — Category (auto-filled if detected) */}
         <div>
-          <FieldLabel number="05" label="Category" />
+          <FieldLabel number="05" label="Category" autoDetected={!!detected && !manuallySet.has("category")} />
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-0">
             {CATEGORIES.map((cat) => (
               <label key={cat} className="relative flex items-center justify-center cursor-pointer">
@@ -128,6 +211,12 @@ export function AddSubscriptionForm() {
                   name="category"
                   value={cat}
                   required
+                  checked={category === cat}
+                  onChange={() => {
+                    setCategory(cat);
+                    // Mark as manually set so auto-detection won't overwrite it
+                    setManuallySet(prev => new Set(prev).add("category"));
+                  }}
                   className="peer sr-only"
                 />
                 <span className="w-full text-center font-mono text-[11px] uppercase tracking-widest
@@ -141,14 +230,20 @@ export function AddSubscriptionForm() {
           </div>
         </div>
 
-        {/* 06 — Cancel URL */}
+        {/* 06 — Cancel URL (auto-filled if detected) */}
         <div>
-          <FieldLabel number="06" label="Cancellation URL" optional />
+          <FieldLabel number="06" label="Cancellation URL" optional autoDetected={!!detected && !manuallySet.has("cancelUrl")} />
           <input
             name="cancelUrl"
             type="url"
             placeholder="https://netflix.com/cancel"
-            className={inputClass}
+            value={cancelUrl}
+            onChange={(e) => {
+              setCancelUrl(e.target.value);
+              // Mark as manually set so auto-detection won't overwrite it
+              setManuallySet(prev => new Set(prev).add("cancelUrl"));
+            }}
+            className={detected && !manuallySet.has("cancelUrl") ? inputAutoClass : inputClass}
           />
         </div>
 
@@ -164,13 +259,13 @@ export function AddSubscriptionForm() {
                 onChange={(e) => setIsTrial(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="w-10 h-5 border border-white/8 peer-checked:border-[#c8ff00]/50 
+              <div className="w-10 h-5 border border-white/8 peer-checked:border-[#c8ff00]/50
                               peer-checked:bg-[#c8ff00]/10 transition-all duration-200" />
-              <div className="absolute top-1 left-1 w-3 h-3 bg-white/20 
+              <div className="absolute top-1 left-1 w-3 h-3 bg-white/20
                               peer-checked:bg-[#c8ff00] peer-checked:translate-x-5
                               transition-all duration-200" />
             </div>
-            <span className="font-mono text-[11px] text-white/30 uppercase tracking-widest 
+            <span className="font-mono text-[11px] text-white/30 uppercase tracking-widest
                              group-hover:text-white/50 transition-colors">
               {isTrial ? "Yes — this is a trial" : "No"}
             </span>
