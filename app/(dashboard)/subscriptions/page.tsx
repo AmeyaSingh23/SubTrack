@@ -8,9 +8,15 @@ import { db } from "@/lib/db";
 import { SubscriptionsList } from "@/components/subscriptions/subscriptions-list";
 import Link from "next/link";
 
-export default async function SubscriptionsPage() {
+type Props = {
+  searchParams: Promise<{ cancelled?: string }>;
+};
+
+export default async function SubscriptionsPage({ searchParams }: Props) {
   const session = await auth();
   if (!session) redirect("/login");
+
+  const { cancelled } = await searchParams;
 
   const subscriptions = await db.subscription.findMany({
     where: { userId: session.user!.id },
@@ -19,6 +25,15 @@ export default async function SubscriptionsPage() {
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
+      {/* Success banner for email cancellation */}
+      {cancelled === "true" && (
+        <div className="mx-8 mt-6 border border-[#c8ff00]/20 bg-[#c8ff00]/5 px-4 py-3">
+          <p className="font-mono text-[11px] text-[#c8ff00] uppercase tracking-widest">
+            Subscription cancelled successfully
+          </p>
+        </div>
+      )}
+
       {/* Header */}
       <div className="relative z-10 flex items-end justify-between px-8 pt-8 pb-6 border-b border-white/6">
         <div>

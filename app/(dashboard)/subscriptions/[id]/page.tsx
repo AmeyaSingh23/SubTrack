@@ -11,13 +11,15 @@ import { ServiceLogo } from "@/components/ui/service-logo";
 
 type Props = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ renewed?: string }>;
 };
 
-export default async function SubscriptionDetailPage({ params }: Props) {
+export default async function SubscriptionDetailPage({ params, searchParams }: Props) {
   const session = await auth();
   if (!session) redirect("/login");
 
   const { id } = await params;
+  const { renewed } = await searchParams;
 
   // Fetch this specific subscription
   // Also verify it belongs to the logged-in user (security)
@@ -34,6 +36,15 @@ export default async function SubscriptionDetailPage({ params }: Props) {
   return (
     <div className="text-white">
       <div className="max-w-xl mx-auto px-4 sm:px-8 py-12">
+        {/* Renewed banner from email link */}
+        {renewed === "true" && (
+          <div className="mb-6 border border-[#c8ff00]/20 bg-[#c8ff00]/5 px-4 py-3">
+            <p className="font-mono text-[11px] text-[#c8ff00] uppercase tracking-widest">
+              Billing date advanced by one cycle. If you changed plans, update the details below.
+            </p>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-10">
           <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.4em] mb-3">

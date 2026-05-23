@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 // BASE_URL is the root of your app — used to build links inside emails.
 // e.g. https://subtrack.vercel.app
 // The "!" tells TypeScript "trust me, this env var exists"
-const BASE_URL = process.env.NEXTAUTH_URL!;
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL!;
 
 // Generates a one-click unsubscribe link for a specific user.
 // The token is an HMAC — a cryptographic signature derived from the userId.
@@ -185,9 +185,10 @@ export async function sendOverdueNudgeEmail({
   // Token is verified server-side before any DB write happens.
   const cancelLink = `${BASE_URL}/api/subscriptions/cancel-via-email?token=${reminderToken}&id=${subscriptionId}`;
 
-  // Renewed link goes to the detail page with ?renewed=true in the URL.
-  // The detail page can read this query param and highlight the date field.
-  const renewedLink = `${BASE_URL}/subscriptions/${subscriptionId}?renewed=true`;
+  // Renewed link hits our API route — auto-advances the billing date
+  // by one cycle, then redirects to the detail page where the user
+  // can adjust if they changed plans (e.g. monthly → yearly).
+  const renewedLink = `${BASE_URL}/api/subscriptions/renew-via-email?token=${reminderToken}&id=${subscriptionId}`;
 
   await transporter.sendMail({
     from: `"SubTrack" <${process.env.EMAIL_FROM}>`,

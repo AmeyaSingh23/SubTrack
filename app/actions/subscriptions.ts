@@ -95,6 +95,7 @@ export async function updateSubscription(id: string, previousState: unknown, for
       nextBillingDate, category,
       cancelUrl: cancelUrl || null,
       isTrial, trialEndDate,
+      reminderToken: null, // Invalidate any pending email cancel link
     },
   });
 

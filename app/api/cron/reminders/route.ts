@@ -135,6 +135,10 @@ export async function GET(request: NextRequest) {
             type: "due_today",
           },
         });
+        await db.subscription.update({
+          where: { id: sub.id },
+          data: { lastNotifiedAt: now },
+        });
         results.due_today.sent++;
       } catch (err) {
         console.error(`Due today email failed for ${sub.name}:`, err);
@@ -195,6 +199,10 @@ export async function GET(request: NextRequest) {
             billingDate: sub.nextBillingDate,
             type: "overdue_nudge",
           },
+        });
+        await db.subscription.update({
+          where: { id: sub.id },
+          data: { lastNotifiedAt: now },
         });
         results.overdue_nudge.sent++;
       } catch (err) {

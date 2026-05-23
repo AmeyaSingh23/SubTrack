@@ -10,7 +10,6 @@ export async function GET(req: Request) {
     return new NextResponse("Invalid link", { status: 400 });
   }
 
-  // First, check if this subscription exists at all
   const sub = await db.subscription.findFirst({
     where: { id },
   });
@@ -19,28 +18,32 @@ export async function GET(req: Request) {
     return new NextResponse("Invalid or expired link", { status: 403 });
   }
 
-  // If already cancelled, just redirect — don't show an error.
-  // This handles double-clicks and email client link prefetching.
-  if (!sub.isActive) {
-    return NextResponse.redirect(
-      new URL("/subscriptions?cancelled=true", req.url)
-    );
-  }
-
   // Token must match for active subscriptions
   if (sub.reminderToken !== token) {
     return new NextResponse("Invalid or expired link", { status: 403 });
   }
 
+  // Auto-advance nextBillingDate by one billing cycle
+  const nextDate = new Date(sub.nextBillingDate);
+  if (sub.billingCycle === "weekly") {
+    nextDate.setDate(nextDate.getDate() + 7);
+  } else if (sub.billingCycle === "yearly") {
+    nextDate.setFullYear(nextDate.getFullYear() + 1);
+  } else {
+    // monthly (default)
+    nextDate.setMonth(nextDate.getMonth() + 1);
+  }
+
   await db.subscription.update({
     where: { id },
     data: {
-      isActive: false,
+      nextBillingDate: nextDate,
       reminderToken: null, // invalidate token after use
     },
   });
 
+  // Redirect to detail page so user can adjust if they changed plans
   return NextResponse.redirect(
-    new URL("/subscriptions?cancelled=true", req.url)
+    new URL(`/subscriptions/${id}?renewed=true`, req.url)
   );
 }
