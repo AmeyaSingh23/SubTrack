@@ -57,6 +57,19 @@ export default async function RemindersPage() {
                       <span className="font-mono text-[11px] text-[#c8ff00]">
                         {log.currency} {log.amount}
                       </span>
+                      <span className={`font-mono text-[10px] px-2 py-0.5 uppercase tracking-widest
+                        ${log.type === "due_today"
+                          ? "border border-amber-500/30 text-amber-400"
+                          : log.type === "overdue_nudge"
+                          ? "border border-red-500/30 text-red-400"
+                          : "border border-white/10 text-white/30"
+                        }`}>
+                        {log.type === "due_today"
+                          ? "Due Today"
+                          : log.type === "overdue_nudge"
+                          ? "Overdue Nudge"
+                          : "Reminder"}
+                      </span>
                     </div>
                     <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest ml-9">
                       Billing on{" "}
@@ -99,8 +112,12 @@ export default async function RemindersPage() {
           <p className="font-mono text-xs text-white/20 leading-relaxed">
             Reminder emails are sent to{" "}
             <span className="text-white/40">{session.user?.email}</span>{" "}
-            48 hours before each billing date. To stop receiving reminders,
-            remove the subscription from SubTrack or delete your account.
+            You receive an alert 2 days before renewal, again on the due date,
+            and a follow-up if a subscription goes overdue.
+            Manage your email preferences in{" "}
+            <a href="/profile" className="text-white/40 underline underline-offset-2 hover:text-white transition-colors">
+              Profile
+            </a>.
           </p>
         </div>
       </div>

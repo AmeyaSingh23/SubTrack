@@ -33,3 +33,15 @@ export async function deleteAccount() {
   // Sign out and redirect to landing page
   await signOut({ redirectTo: "/" });
 }
+
+export async function updateEmailPreference(enabled: boolean) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  await db.user.update({
+    where: { id: session.user.id },
+    data: { emailRemindersEnabled: enabled },
+  });
+
+  revalidatePath("/profile");
+}

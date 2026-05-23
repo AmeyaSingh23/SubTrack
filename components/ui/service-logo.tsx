@@ -11,10 +11,8 @@ type Props = {
 
 export function ServiceLogo({ name, size = 32, className = "" }: Props) {
   const domain = getServiceDomain(name);
-  console.log(name, "→", domain);
-
   
-  // Track which source we're on: clearbit → favicon → letter
+  // Track which source we're on: favicon → letter
   const [stage, setStage] = useState<"favicon" | "letter">(
     domain ? "favicon" : "letter");
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateUserName, deleteAccount } from "@/app/actions/profile";
+import { updateUserName, deleteAccount, updateEmailPreference  } from "@/app/actions/profile";
 import Link from "next/link";
 
 type User = {
@@ -35,10 +35,12 @@ function FieldLabel({ number, label }: { number: string; label: string }) {
 type Props = {
   user: User;
   monthlyTotal: number;
+  emailRemindersEnabled: boolean;
 }
 
-export function ProfileForm({ user, monthlyTotal }: Props) {
+export function ProfileForm({ user, monthlyTotal, emailRemindersEnabled: initialEnabled }: Props) {
   const [name, setName] = useState(user.name ?? "");
+  const [remindersEnabled, setRemindersEnabled] = useState(initialEnabled);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteInput, setDeleteInput] = useState("");
   const [isSaving, startSaveTransition] = useTransition();
@@ -170,6 +172,35 @@ export function ProfileForm({ user, monthlyTotal }: Props) {
           <p className="font-mono text-[10px] text-white/20 mt-2">
             Email is managed by your Google account and cannot be changed here.
           </p>
+        </div>
+
+        <div>
+          <FieldLabel number="03" label="Email Reminders" />
+          <div className="flex items-center justify-between border border-white/8 px-4 py-3">
+            <div>
+              <p className="font-mono text-xs text-white/60">
+                {remindersEnabled ? "Reminders are on" : "Reminders are off"}
+              </p>
+              <p className="font-mono text-[10px] text-white/20 mt-0.5">
+                Billing alerts 2 days before renewal and on due date
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={async () => {
+                const next = !remindersEnabled;
+                setRemindersEnabled(next);
+                await updateEmailPreference(next);
+              }}
+              className={`relative w-10 h-5 rounded-full transition-colors duration-200 shrink-0
+                          ${remindersEnabled ? "bg-[#c8ff00]" : "bg-white/10"}`}
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-black transition-transform duration-200
+                            ${remindersEnabled ? "translate-x-5" : "translate-x-0"}`}
+              />
+            </button>
+          </div>
         </div>
 
         <button

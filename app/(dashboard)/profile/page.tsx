@@ -16,6 +16,7 @@ export default async function ProfilePage() {
       email: true,
       image: true,
       createdAt: true,
+      emailRemindersEnabled: true,
       _count: {
         select: { subscriptions: true },
       },
@@ -47,7 +48,7 @@ export default async function ProfilePage() {
       </div>
 
       <div className="px-8 py-8">
-        <ProfileForm user={user} monthlyTotal={monthlyTotal} />
+        <ProfileForm user={user} monthlyTotal={monthlyTotal} emailRemindersEnabled={user.emailRemindersEnabled} />
       </div>
     </main>
   );

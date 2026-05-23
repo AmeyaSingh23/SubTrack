@@ -20,6 +20,7 @@ model User {
   emailVerified DateTime?
   image         String?
   createdAt     DateTime  @default(now())
+  emailRemindersEnabled  Boolean  @default(true)
 
   // Relations — one User has many Subscriptions and Accounts
   subscriptions Subscription[]
@@ -51,6 +52,8 @@ model Subscription {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt      // Auto-updates on every save
   lastNotifiedAt DateTime? // Track when we last sent a reminder for this sub
+  reminderToken  String?  // for secure email CTA links
+  reminderLogs     ReminderLog[]
 
   // Foreign key - links this subscription to its owner
   userId         String
@@ -102,8 +105,10 @@ model ReminderLog {
   currency         String
   billingDate      DateTime
   sentAt           DateTime @default(now())
+  type  String  @default("reminder") // "reminder" | "due_today" | "overdue_nudge"
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription     Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
