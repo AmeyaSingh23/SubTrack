@@ -4,6 +4,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ServiceLogo } from "@/components/ui/service-logo";
+import { exportToCSV } from "@/lib/export-csv";
 
 type Subscription = {
   id: string;
@@ -15,6 +16,8 @@ type Subscription = {
   category: string;
   isTrial: boolean;
   isActive: boolean;
+  cancelUrl: string | null;
+  createdAt: Date;
 };
 
 type Filter = "all" | "active" | "cancelled" | "trials" | "overdue";
@@ -115,6 +118,17 @@ export function SubscriptionsList({
             </li>
           ))}
         </ul>
+        <div className="mt-6 pt-6 border-t border-white/6">
+          <button
+            onClick={() => exportToCSV(subscriptions)}
+            className="w-full font-mono text-[10px] text-white/20 uppercase tracking-widest
+                      border border-white/6 px-3 py-2
+                    hover:border-[#c8ff00]/30 hover:text-[#c8ff00]
+                      transition-colors duration-200 text-left"
+          >
+            Export CSV ↓
+          </button>
+        </div>
       </aside>
 
       {/* Subscriptions list */}

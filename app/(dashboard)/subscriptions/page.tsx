@@ -21,6 +21,19 @@ export default async function SubscriptionsPage({ searchParams }: Props) {
   const subscriptions = await db.subscription.findMany({
     where: { userId: session.user!.id },
     orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      amount: true,
+      currency: true,
+      billingCycle: true,
+      nextBillingDate: true,
+      category: true,
+      isTrial: true,
+      isActive: true,
+      cancelUrl: true,
+      createdAt: true,
+    },
   });
 
   return (
