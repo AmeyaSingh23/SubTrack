@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-mono selection:bg-[#c8ff00] selection:text-black">
+    <div className="min-h-screen overflow-y-auto bg-[#0a0a0a] text-white font-mono selection:bg-[#c8ff00] selection:text-black">
       {/* Navigation */}
       <nav className="border-b-4 border-white">
         <div className="max-w-4xl mx-auto px-6 py-6">
