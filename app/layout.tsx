@@ -17,6 +17,13 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   title: "SubTrack — Subscription Manager",
   description: "Track, monitor, and optimize your recurring digital expenses.",
+  manifest: "/manifest.json",
+  themeColor: "#0a0a0a",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "SubTrack",
+  },
 };
 
 export default function RootLayout({
