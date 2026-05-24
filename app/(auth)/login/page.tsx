@@ -83,7 +83,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Login */}
-      <div className="flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-16">
+      <div className="flex-1 flex flex-col p-6 sm:p-8 lg:p-16">
         {/* Mobile Brand */}
         <div className="lg:hidden flex items-center gap-3 mb-12">
           <div className="w-3 h-3 bg-[#c8ff00]" />
@@ -146,22 +146,20 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-12 border-t border-white/6">
-          <div className="flex items-center gap-6">
-            <Link 
-              href="/privacy" 
-              className="text-[10px] uppercase tracking-[0.3em] text-white/30 hover:text-[#c8ff00] transition-colors"
-            >
-              Privacy
-            </Link>
-            <Link 
-              href="/terms" 
-              className="text-[10px] uppercase tracking-[0.3em] text-white/30 hover:text-[#c8ff00] transition-colors"
-            >
-              Terms
-            </Link>
-          </div>
+        {/* Footer - always at bottom, outside the centered content */}
+        <div className="flex items-center gap-6 pt-8 mt-8 border-t border-white/6">
+          <Link 
+            href="/privacy" 
+            className="text-[10px] uppercase tracking-[0.3em] text-white/30 hover:text-[#c8ff00] transition-colors"
+          >
+            Privacy
+          </Link>
+          <Link 
+            href="/terms" 
+            className="text-[10px] uppercase tracking-[0.3em] text-white/30 hover:text-[#c8ff00] transition-colors"
+          >
+            Terms
+          </Link>
         </div>
       </div>
     </main>
