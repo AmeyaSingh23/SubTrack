@@ -20,6 +20,7 @@ export default async function ProfilePage() {
       _count: {
         select: { subscriptions: true },
       },
+      monthlyBudget: true,
     },
   });
 

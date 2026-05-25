@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { updateUserName, deleteAccount, updateEmailPreference  } from "@/app/actions/profile";
 import Link from "next/link";
+import { updateMonthlyBudget } from "@/app/actions/profile";
 
 type User = {
   id: string;
@@ -11,6 +12,7 @@ type User = {
   image: string | null;
   createdAt: Date;
   _count: { subscriptions: number };
+  monthlyBudget: number | null;
 };
 
 const inputClass = `
@@ -45,6 +47,10 @@ export function ProfileForm({ user, monthlyTotal, emailRemindersEnabled: initial
   const [deleteInput, setDeleteInput] = useState("");
   const [isSaving, startSaveTransition] = useTransition();
   const [isDeleting, startDeleteTransition] = useTransition();
+  const [budget, setBudget] = useState(
+    user.monthlyBudget ? user.monthlyBudget.toString() : ""
+  );
+  const [budgetSaved, setBudgetSaved] = useState(false);
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -175,7 +181,41 @@ export function ProfileForm({ user, monthlyTotal, emailRemindersEnabled: initial
         </div>
 
         <div>
-          <FieldLabel number="03" label="Email Reminders" />
+          <div className="flex items-baseline justify-between mb-2">
+            <FieldLabel number="03" label="Monthly Budget" />
+            {budgetSaved && (
+            <span
+              className="font-mono text-[9px] text-[#c8ff00] uppercase tracking-widest animate-pulse"
+            >
+              Saved ✓
+            </span>
+            )}
+          </div>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-sm text-white/30">
+              ₹
+            </span>
+            <input
+              type="number"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              onBlur={async () => {
+                const val = parseFloat(budget);
+                await updateMonthlyBudget(isNaN(val) ? null : val);
+                setBudgetSaved(true);
+                setTimeout(() => setBudgetSaved(false), 2000);
+              }}
+              placeholder="e.g. 2000"
+              className={`${inputClass} pl-8`}
+            />
+          </div>
+          <p className="font-mono text-[10px] text-white/20 mt-2">
+            Get alerted on dashboard when spending exceeds 80% of this.
+          </p>
+        </div>
+
+        <div>
+          <FieldLabel number="04" label="Email Reminders" />
           <div className="flex items-center justify-between border border-white/8 px-4 py-3">
             <div>
               <p className="font-mono text-xs text-white/60">
@@ -205,7 +245,9 @@ export function ProfileForm({ user, monthlyTotal, emailRemindersEnabled: initial
 
         <button
           type="submit"
-          disabled={isSaving || name === (user.name ?? "")}
+          disabled={
+            isSaving ||name === (user.name ?? "")
+          }
           className="w-full bg-white text-black font-bold text-sm uppercase
                      tracking-widest px-6 py-4 hover:bg-[#c8ff00]
                      transition-colors duration-200

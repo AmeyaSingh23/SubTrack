@@ -10,6 +10,11 @@ export default async function DashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
+  const user = await db.user.findUnique({
+    where: { id: session.user!.id },
+    select: { monthlyBudget: true },
+  });
+
   const subscriptions = await db.subscription.findMany({
     where: { userId: session.user!.id, isActive: true },
     orderBy: { nextBillingDate: "asc" },
@@ -20,6 +25,9 @@ export default async function DashboardPage() {
     if (sub.billingCycle === "yearly") return sum + sub.amount / 12;
     return sum;
   }, 0);
+
+  const budget = user?.monthlyBudget ?? null;
+  const budgetPercent = budget ? (monthlyTotal / budget) * 100 : null;
 
   const annualTotal = monthlyTotal * 12;
 
@@ -85,6 +93,34 @@ export default async function DashboardPage() {
           </Link>
         </div>
       </header>
+
+      {/* Budget Alert Banner */}
+      {budgetPercent !== null && budgetPercent >= 80 && (
+      <div className={`px-4 sm:px-6 md:px-12 py-3 border-b flex items-center justify-between
+        ${budgetPercent >= 100
+          ? "border-red-500/20 bg-red-500/5"
+          : "border-amber-500/20 bg-amber-500/5"
+        }`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-1.5 h-1.5 rounded-full ${budgetPercent >= 100 ? "bg-red-400" : "bg-amber-400"}`} />
+          <p className={`font-mono text-[11px] uppercase tracking-widest
+            ${budgetPercent >= 100 ? "text-red-400" : "text-amber-400"}`}>
+            {budgetPercent >= 100
+              ? `Monthly budget exceeded by ₹${Math.round(monthlyTotal - budget!).toLocaleString("en-IN")}`
+              : `${Math.round(budgetPercent)}% of monthly budget used — ₹${Math.round(budget! - monthlyTotal).toLocaleString("en-IN")} remaining`
+            }
+          </p>
+        </div>
+        <a
+          href="/profile"
+          className={`font-mono text-[10px] uppercase tracking-widest
+          ${budgetPercent >= 100 ? "text-red-400/60 hover:text-red-400" : "text-amber-400/60 hover:text-amber-400"}
+          transition-colors`}
+        >
+          Edit Budget →
+        </a>
+      </div>
+      )}
 
       {/* Main Content */}
       <div className="relative z-10 px-4 sm:px-6 md:px-12 py-12 space-y-16">

@@ -21,6 +21,7 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   emailRemindersEnabled  Boolean  @default(true)
+  monthlyBudget Float?
 
   // Relations — one User has many Subscriptions and Accounts
   subscriptions Subscription[]

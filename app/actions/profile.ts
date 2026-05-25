@@ -45,3 +45,16 @@ export async function updateEmailPreference(enabled: boolean) {
 
   revalidatePath("/profile");
 }
+
+export async function updateMonthlyBudget(amount: number | null) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  await db.user.update({
+    where: { id: session.user.id },
+    data: { monthlyBudget: amount },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/profile");
+}
