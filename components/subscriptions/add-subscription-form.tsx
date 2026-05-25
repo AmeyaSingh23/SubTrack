@@ -77,6 +77,7 @@ export function AddSubscriptionForm() {
   // Controlled state for auto-filled fields so they can be overridden by user
   const [category, setCategory] = useState("");
   const [billingCycle, setBillingCycle] = useState("monthly");
+  const [isShared, setIsShared] = useState(false);
   const [cancelUrl, setCancelUrl] = useState("");
 
   // Tracks which fields the user has manually overridden
@@ -279,6 +280,47 @@ export function AddSubscriptionForm() {
                 type="date"
                 className={inputClass}
               />
+            </div>
+          )}
+        </div>
+
+        {/* 08 — Shared Subscription */}
+        <div>
+          <FieldLabel number="08" label="Shared Subscription?" optional />
+          <label className="flex items-center gap-4 cursor-pointer group">
+            <div className="relative">
+              <input
+                name="isShared"
+                type="checkbox"
+                checked={isShared}
+                onChange={(e) => setIsShared(e.target.checked)}
+                className="peer sr-only"
+              />
+              <div className="w-10 h-5 border border-white/8 peer-checked:border-[#c8ff00]/50
+                            peer-checked:bg-[#c8ff00]/10 transition-all duration-200" />
+              <div className="absolute top-1 left-1 w-3 h-3 bg-white/20
+                            peer-checked:bg-[#c8ff00] peer-checked:translate-x-5
+                              transition-all duration-200" />
+            </div>
+            <span className="font-mono text-[11px] text-white/30 uppercase tracking-widest
+                            group-hover:text-white/50 transition-colors">
+              {isShared ? "Yes — splitting with others" : "No"}
+            </span>
+          </label>
+          {isShared && (
+            <div className="mt-4">
+              <FieldLabel number="08b" label="Split Between How Many People?" />
+              <input
+                name="splitCount"
+                type="number"
+                min="2"
+                max="10"
+                defaultValue="2"
+                className={inputClass}
+              />
+              <p className="font-mono text-[10px] text-white/20 mt-2">
+                Include yourself. e.g. 2 = you + 1 friend.
+              </p>
             </div>
           )}
         </div>

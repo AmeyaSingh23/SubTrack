@@ -18,11 +18,27 @@ export default async function DashboardPage() {
   const subscriptions = await db.subscription.findMany({
     where: { userId: session.user!.id, isActive: true },
     orderBy: { nextBillingDate: "asc" },
+    select: {
+      id: true,
+      name: true,
+      amount: true,
+      currency: true,
+      billingCycle: true,
+      nextBillingDate: true,
+      category: true,
+      isTrial: true,
+      isActive: true,
+      cancelUrl: true,
+      isShared: true,
+      splitCount: true,
+    },
   });
 
   const monthlyTotal = subscriptions.reduce((sum: number, sub: any) => {
-    if (sub.billingCycle === "monthly") return sum + sub.amount;
-    if (sub.billingCycle === "yearly") return sum + sub.amount / 12;
+    const share = sub.isShared ? sub.amount / sub.splitCount : sub.amount;
+    if (sub.billingCycle === "monthly") return sum + share;
+    if (sub.billingCycle === "yearly") return sum + share / 12;
+    if (sub.billingCycle === "weekly") return sum + (share * 52) / 12;
     return sum;
   }, 0);
 
@@ -38,12 +54,13 @@ export default async function DashboardPage() {
 
   const byCategory = subscriptions.reduce(
     (acc: Record<string, number>, sub: any) => {
+      const share = sub.isShared ? sub.amount / sub.splitCount : sub.amount;
       const monthlyAmount =
         sub.billingCycle === "yearly"
-          ? sub.amount / 12
+          ? share / 12
           : sub.billingCycle === "weekly"
-            ? (sub.amount * 52) / 12
-            : sub.amount;
+            ? (share * 52) / 12
+            : share;
       acc[sub.category] = (acc[sub.category] || 0) + monthlyAmount;
       return acc;
     },

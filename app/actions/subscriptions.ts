@@ -32,6 +32,8 @@ export async function createSubscription(
   const isTrial = formData.get("isTrial") === "on";
   const trialEndDateRaw = formData.get("trialEndDate") as string;
   const trialEndDate = trialEndDateRaw ? new Date(trialEndDateRaw) : null;
+  const isShared = formData.get("isShared") === "on";
+  const splitCount = isShared ? parseInt(formData.get("splitCount") as string) || 2 : 1;
 
   // Step 3: Basic validation
   // Never trust data coming from the client — always validate on the server.
@@ -51,6 +53,8 @@ export async function createSubscription(
       cancelUrl: cancelUrl || null,
       isTrial,
       trialEndDate,
+      isShared,
+      splitCount,
       userId: session.user.id, // Always use the server session — never trust client-sent userId
     },
   });
@@ -87,6 +91,8 @@ export async function updateSubscription(id: string, previousState: unknown, for
   const isTrial = formData.get("isTrial") === "on";
   const trialEndDateRaw = formData.get("trialEndDate") as string;
   const trialEndDate = trialEndDateRaw ? new Date(trialEndDateRaw) : null;
+  const isShared = formData.get("isShared") === "on";
+  const splitCount = isShared ? parseInt(formData.get("splitCount") as string) || 2 : 1;
 
   await db.subscription.update({
     where: { id },
@@ -95,6 +101,8 @@ export async function updateSubscription(id: string, previousState: unknown, for
       nextBillingDate, category,
       cancelUrl: cancelUrl || null,
       isTrial, trialEndDate,
+      isShared,
+      splitCount,
       reminderToken: null, // Invalidate any pending email cancel link
     },
   });

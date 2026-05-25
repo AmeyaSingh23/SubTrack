@@ -9,6 +9,8 @@ type Subscription = {
   nextBillingDate: Date;
   isTrial: boolean;
   cancelUrl?: string | null;
+  isShared: boolean;
+  splitCount: number;
 };
 
 type Props = {
@@ -89,9 +91,16 @@ export function UpcomingBills({ subscriptions }: Props) {
 
                   <div className="flex items-center gap-3">
                     <DaysBadge days={days} />
-                    <p className="text-sm font-mono font-semibold text-white/70 w-16 text-right">
-                      ₹{sub.amount}
-                    </p>
+                    <div className="text-right">
+                      <p className="text-sm font-mono font-semibold text-white/70">
+                        ₹{Math.round(sub.isShared ? sub.amount / sub.splitCount : sub.amount)}
+                      </p>
+                      {sub.isShared && (
+                        <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
+                          ÷{sub.splitCount} split
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </Link>
               </li>

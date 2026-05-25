@@ -15,14 +15,16 @@ export default async function AnalyticsPage() {
   const activeSubscriptions = allSubscriptions.filter((s: any) => s.isActive);
 
   // Active monthly burn — what you're paying RIGHT NOW
+  // Uses your share (amount / splitCount) for shared subscriptions
   const activeByCategoryMonthly = activeSubscriptions.reduce(
     (acc: Record<string, number>, sub: any) => {
+      const share = sub.isShared ? sub.amount / sub.splitCount : sub.amount;
       const monthly =
         sub.billingCycle === "yearly"
-          ? sub.amount / 12
+          ? share / 12
           : sub.billingCycle === "weekly"
-          ? (sub.amount * 52) / 12
-          : sub.amount;
+          ? (share * 52) / 12
+          : share;
       acc[sub.category] = (acc[sub.category] || 0) + monthly;
       return acc;
     },
@@ -46,12 +48,13 @@ export default async function AnalyticsPage() {
     const total = activeSubscriptions
       .filter((sub: any) => new Date(sub.createdAt) <= endOfMonth)
       .reduce((sum: number, sub: any) => {
+        const share = sub.isShared ? sub.amount / sub.splitCount : sub.amount;
         const monthly =
           sub.billingCycle === "yearly"
-            ? sub.amount / 12
+            ? share / 12
             : sub.billingCycle === "weekly"
-            ? (sub.amount * 52) / 12
-            : sub.amount;
+            ? (share * 52) / 12
+            : share;
         return sum + monthly;
       }, 0);
     return { month: label, total: Math.round(total) };
@@ -59,23 +62,25 @@ export default async function AnalyticsPage() {
 
   // Top active subscriptions by monthly cost
   const topSubs = [...activeSubscriptions]
-    .map((sub: any) => ({
-      name: sub.name,
-      monthly:
-        sub.billingCycle === "yearly"
-          ? sub.amount / 12
-          : sub.billingCycle === "weekly"
-          ? (sub.amount * 52) / 12
-          : sub.amount,
-      billingCycle: sub.billingCycle,
-      amount: sub.amount,
-    }))
+    .map((sub: any) => {
+      const share = sub.isShared ? sub.amount / sub.splitCount : sub.amount;
+      return {
+        name: sub.name,
+        monthly:
+          sub.billingCycle === "yearly"
+            ? share / 12
+            : sub.billingCycle === "weekly"
+            ? (share * 52) / 12
+            : share,
+        billingCycle: sub.billingCycle,
+        amount: share,
+      };
+    })
     .sort((a, b) => b.monthly - a.monthly)
     .slice(0, 5);
 
   // Historical spend — ALL subs ever, calculate total ever paid
-  // Logic: from createdAt to either now (if active) or updatedAt (if cancelled)
-  // We estimate months active * monthly cost
+  // Uses your share for shared subscriptions
   const historicalByCategory = allSubscriptions.reduce(
     (acc: Record<string, number>, sub: any) => {
       const start = new Date(sub.createdAt);
@@ -86,12 +91,13 @@ export default async function AnalyticsPage() {
           (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30)
         )
       );
+      const share = sub.isShared ? sub.amount / sub.splitCount : sub.amount;
       const monthly =
         sub.billingCycle === "yearly"
-          ? sub.amount / 12
+          ? share / 12
           : sub.billingCycle === "weekly"
-          ? (sub.amount * 52) / 12
-          : sub.amount;
+          ? (share * 52) / 12
+          : share;
       acc[sub.category] = (acc[sub.category] || 0) + monthly * monthsActive;
       return acc;
     },
@@ -115,12 +121,13 @@ export default async function AnalyticsPage() {
           (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30)
         )
       );
+      const share = sub.isShared ? sub.amount / sub.splitCount : sub.amount;
       const monthly =
         sub.billingCycle === "yearly"
-          ? sub.amount / 12
+          ? share / 12
           : sub.billingCycle === "weekly"
-          ? (sub.amount * 52) / 12
-          : sub.amount;
+          ? (share * 52) / 12
+          : share;
       return {
         name: sub.name,
         category: sub.category,

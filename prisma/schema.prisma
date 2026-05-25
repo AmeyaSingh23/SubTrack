@@ -44,6 +44,8 @@ model Subscription {
   billingCycle   String   // "monthly" | "yearly" | "weekly"
   nextBillingDate DateTime // When the next charge hits
   category       String   // "Streaming" | "Work" | "Utilities" | etc.
+  isShared       Boolean  @default(false)
+  splitCount     Int      @default(1)
   
   cancelUrl      String?  // Direct cancellation link (from PRD)
   isTrial        Boolean  @default(false) // Is this currently in a free trial?

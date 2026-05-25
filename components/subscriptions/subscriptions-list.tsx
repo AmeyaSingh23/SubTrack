@@ -18,6 +18,8 @@ type Subscription = {
   isActive: boolean;
   cancelUrl: string | null;
   createdAt: Date;
+  isShared: boolean;
+  splitCount: number;
 };
 
 type Filter = "all" | "active" | "cancelled" | "trials" | "overdue";
@@ -27,7 +29,7 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: "active", label: "Active" },
   { key: "cancelled", label: "Cancelled" },
   { key: "trials", label: "Free Trials" },
-  { key: "overdue", label: "Overdue"},
+  { key: "overdue", label: "Overdue" },
 ];
 
 function daysUntil(date: Date): number {
@@ -80,7 +82,7 @@ export function SubscriptionsList({
     if (filter === "cancelled") return !sub.isActive;
     if (filter === "trials") return sub.isTrial;
     if (filter === "overdue") return daysUntil(sub.nextBillingDate) < 0 && sub.isActive;
-    return true; // "all"
+    return true;
   });
 
   const counts = {
@@ -122,9 +124,9 @@ export function SubscriptionsList({
           <button
             onClick={() => exportToCSV(subscriptions)}
             className="w-full font-mono text-[10px] text-white/20 uppercase tracking-widest
-                      border border-white/6 px-3 py-2
-                    hover:border-[#c8ff00]/30 hover:text-[#c8ff00]
-                      transition-colors duration-200 text-left"
+                       border border-white/6 px-3 py-2
+                       hover:border-[#c8ff00]/30 hover:text-[#c8ff00]
+                       transition-colors duration-200 text-left"
           >
             Export CSV ↓
           </button>
@@ -149,22 +151,32 @@ export function SubscriptionsList({
           <ul className="divide-y divide-white/6">
             {filtered.map((sub) => {
               const days = daysUntil(sub.nextBillingDate);
+              const displayAmount = sub.isShared
+                ? Math.round(sub.amount / sub.splitCount)
+                : sub.amount;
               return (
-                // Entire row is a link to the detail page
                 <li key={sub.id}>
                   <Link
                     href={`/subscriptions/${sub.id}`}
                     className="flex items-center gap-4 py-4 group
                                hover:bg-white/2 -mx-4 px-4 transition-colors duration-150"
                   >
-                    {/* Initial avatar */}
+                    {/* Logo */}
                     <ServiceLogo name={sub.name} size={32} className="shrink-0" />
 
                     {/* Name + category */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-white/80 group-hover:text-white transition-colors truncate">
-                        {sub.name}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-sm text-white/80 group-hover:text-white transition-colors truncate">
+                          {sub.name}
+                        </p>
+                        {sub.isShared && (
+                          <span className="font-mono text-[9px] text-white/30 border border-white/10
+                                           px-1.5 py-0.5 uppercase tracking-widest shrink-0">
+                            ÷{sub.splitCount}
+                          </span>
+                        )}
+                      </div>
                       <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest mt-0.5">
                         {sub.category} · {sub.billingCycle}
                       </p>
@@ -188,10 +200,17 @@ export function SubscriptionsList({
                     </div>
 
                     {/* Amount */}
-                    <p className="font-mono font-bold text-sm text-white/70
-                                  group-hover:text-white transition-colors shrink-0 w-20 text-right">
-                      ₹{sub.amount}
-                    </p>
+                    <div className="shrink-0 w-20 text-right">
+                      <p className="font-mono font-bold text-sm text-white/70
+                                    group-hover:text-white transition-colors">
+                        ₹{displayAmount}
+                      </p>
+                      {sub.isShared && (
+                        <p className="font-mono text-[9px] text-white/20">
+                          your share
+                        </p>
+                      )}
+                    </div>
 
                     {/* Arrow */}
                     <span className="font-mono text-white/10 group-hover:text-[#c8ff00] transition-colors text-xs">
