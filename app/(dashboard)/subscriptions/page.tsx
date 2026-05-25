@@ -33,6 +33,8 @@ export default async function SubscriptionsPage({ searchParams }: Props) {
       isActive: true,
       cancelUrl: true,
       createdAt: true,
+      isShared: true,
+      splitCount: true,
     },
   });
 
