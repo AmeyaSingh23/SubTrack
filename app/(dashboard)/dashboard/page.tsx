@@ -68,27 +68,27 @@ export default async function DashboardPage() {
   );
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-[#c8ff00] selection:text-black">
+    <main className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)] font-sans selection:bg-[#c8ff00] selection:text-black">
       {/* Header - Editorial Style */}
-      <header className="relative z-10 px-4 sm:px-6 md:px-12 pt-8 pb-12 border-b border-white/5">
+      <header className="relative z-10 px-4 sm:px-6 md:px-12 pt-8 pb-12 border-b border-[var(--border-subtle)]">
         <div className="flex items-end justify-between">
           <div className="space-y-1">
-            <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.3em]">
+            <p className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-[0.3em]">
               SubTrack / Dashboard
             </p>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-[-0.04em] text-white">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-[-0.04em] text-[var(--text-primary)]">
               {session.user?.name?.split(" ")[0] || "Your"}&apos;s
               <br />
-              <span className="text-white/40">Burn Rate</span>
+              <span className="text-[var(--text-secondary)]">Burn Rate</span>
             </h1>
           </div>
 
           <Link
             href="/subscriptions/new"
-            className="group relative flex items-center gap-3 bg-[#c8ff00] text-black 
+            className="group relative flex items-center gap-3 bg-[var(--accent)] text-[var(--accent-text)] 
                        text-sm font-bold uppercase tracking-widest px-6 py-4
-                       hover:bg-white transition-all duration-300
-                       before:absolute before:inset-0 before:border-2 before:border-[#c8ff00]
+                       hover:bg-[var(--btn-invert-bg)] hover:text-[var(--btn-invert-text)] transition-all duration-300
+                       before:absolute before:inset-0 before:border-2 before:border-[var(--accent)]
                        before:translate-x-1 before:translate-y-1 before:-z-10
                        hover:before:translate-x-2 hover:before:translate-y-2
                        before:transition-transform before:duration-300"
@@ -114,14 +114,13 @@ export default async function DashboardPage() {
       {/* Budget Alert Banner */}
       {budgetPercent !== null && budgetPercent >= 80 && (
       <div className={`px-4 sm:px-6 md:px-12 py-3 border-b flex items-center justify-between
-        ${budgetPercent >= 100
-          ? "border-red-500/20 bg-red-500/5"
-          : "border-amber-500/20 bg-amber-500/5"
+        ${budgetPercent >= 90
+          ? "border-[var(--danger-border)] bg-[var(--danger-bg)]"
+          : "border-[var(--warning-border)] bg-[var(--warning-bg)]"
         }`}>
         <div className="flex items-center gap-3">
-          <div className={`w-1.5 h-1.5 rounded-full ${budgetPercent >= 100 ? "bg-red-400" : "bg-amber-400"}`} />
-          <p className={`font-mono text-[11px] uppercase tracking-widest
-            ${budgetPercent >= 100 ? "text-red-400" : "text-amber-400"}`}>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: budgetPercent >= 90 ? "var(--danger-dot)" : "var(--warning-dot)" }} />
+          <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: budgetPercent >= 90 ? "var(--danger-text)" : "var(--warning-text)" }}>
             {budgetPercent >= 100
               ? `Monthly budget exceeded by ₹${Math.round(monthlyTotal - budget!).toLocaleString("en-IN")}`
               : `${Math.round(budgetPercent)}% of monthly budget used — ₹${Math.round(budget! - monthlyTotal).toLocaleString("en-IN")} remaining`
@@ -130,9 +129,8 @@ export default async function DashboardPage() {
         </div>
         <a
           href="/profile"
-          className={`font-mono text-[10px] uppercase tracking-widest
-          ${budgetPercent >= 100 ? "text-red-400/60 hover:text-red-400" : "text-amber-400/60 hover:text-amber-400"}
-          transition-colors`}
+          className="font-mono text-[10px] uppercase tracking-widest opacity-70 hover:opacity-100 transition-opacity"
+          style={{ color: budgetPercent >= 90 ? "var(--danger-text)" : "var(--warning-text)" }}
         >
           Edit Budget →
         </a>
@@ -159,7 +157,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Footer Accent Line */}
-      <div className="fixed bottom-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-[#c8ff00] to-transparent opacity-20" />
+      <div className="fixed bottom-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-[var(--accent)] to-transparent opacity-20" />
     </main>
   );
 }

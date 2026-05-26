@@ -1,5 +1,85 @@
 @import "tailwindcss";
 
+:root {
+  --bg: #0a0a0a;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --text-primary: rgba(255, 255, 255, 0.9);
+  --text-secondary: rgba(255, 255, 255, 0.4);
+  --text-muted: rgba(255, 255, 255, 0.2);
+  --text-faint: rgba(255, 255, 255, 0.1);
+  --accent: #c8ff00;
+  --accent-text: #000000;
+
+  /* Inverted button: white in dark mode, near-black in light mode.
+     Used for CTAs that should always contrast strongly with the page bg. */
+  --btn-invert-bg: #ffffff;
+  --btn-invert-text: #0a0a0a;
+  --btn-invert-bg-hover: #c8ff00;
+  --btn-invert-text-hover: #000000;
+
+  /* Status colors — danger (red) and warning (amber).
+     In dark mode these are bright/light so they pop on black.
+     In light mode they switch to dark/saturated shades for contrast on cream. */
+  --danger-text: #f87171;          /* tailwind red-400 */
+  --danger-bg: rgba(239, 68, 68, 0.05);    /* red-500 @ 5% */
+  --danger-bg-strong: rgba(239, 68, 68, 0.15);
+  --danger-border: rgba(239, 68, 68, 0.2);
+  --danger-border-strong: rgba(239, 68, 68, 0.3);
+  --danger-solid: #ef4444;         /* red-500 */
+  --danger-solid-hover: #dc2626;   /* red-600 */
+  --danger-dot: #f87171;           /* red-400 */
+
+  --warning-text: #fbbf24;         /* tailwind amber-400 */
+  --warning-bg: rgba(245, 158, 11, 0.05);  /* amber-500 @ 5% */
+  --warning-bg-strong: rgba(245, 158, 11, 0.15);
+  --warning-border: rgba(245, 158, 11, 0.2);
+  --warning-border-strong: rgba(245, 158, 11, 0.3);
+  --warning-dot: #fbbf24;
+}
+
+[data-theme="light"] {
+  --bg: #f5f5f0;
+  --bg-card: rgba(0, 0, 0, 0.04);
+  --bg-card-hover: rgba(0, 0, 0, 0.08);
+  --border: rgba(0, 0, 0, 0.2);
+  --border-subtle: rgba(0, 0, 0, 0.14);
+  /* Light mode: text opacities pushed high for readability against #f5f5f0.
+     Even "faint" text needs to be near-black to be legible at small sizes. */
+  --text-primary: rgba(0, 0, 0, 0.95);
+  --text-secondary: rgba(0, 0, 0, 0.85);
+  --text-muted: rgba(0, 0, 0, 0.72);
+  --text-faint: rgba(0, 0, 0, 0.6);
+  --accent: #5a7a00;
+  --accent-text: #ffffff;
+
+  /* In light mode, the "white" CTA becomes black so it pops against the bg */
+  --btn-invert-bg: #0a0a0a;
+  --btn-invert-text: #ffffff;
+  --btn-invert-bg-hover: #5a7a00;
+  --btn-invert-text-hover: #ffffff;
+
+  /* Light mode status colors: dark, saturated shades for contrast on cream.
+     Backgrounds stay subtle but borders/text use much darker shades. */
+  --danger-text: #991b1b;          /* red-800 — dark red, very readable */
+  --danger-bg: rgba(153, 27, 27, 0.07);
+  --danger-bg-strong: rgba(153, 27, 27, 0.14);
+  --danger-border: rgba(153, 27, 27, 0.35);
+  --danger-border-strong: rgba(153, 27, 27, 0.5);
+  --danger-solid: #b91c1c;         /* red-700 */
+  --danger-solid-hover: #991b1b;   /* red-800 */
+  --danger-dot: #b91c1c;
+
+  --warning-text: #854d0e;         /* yellow-800 — dark mustard, very readable */
+  --warning-bg: rgba(133, 77, 14, 0.07);
+  --warning-bg-strong: rgba(133, 77, 14, 0.14);
+  --warning-border: rgba(133, 77, 14, 0.35);
+  --warning-border-strong: rgba(133, 77, 14, 0.5);
+  --warning-dot: #a16207;          /* yellow-700 */
+}
+
 @keyframes scroll-up {
   from { transform: translateY(0); }
   to   { transform: translateY(-50%); }
@@ -18,10 +98,16 @@
   animation: scroll-down 30s linear infinite;
 }
 
-html{
+html {
   overflow: hidden;
 }
 
 body {
-  background-color: #0a0a0a;
+  background-color: var(--bg);
+  scroll-behavior: smooth;
+}
+
+/* Smooth scrolling for any scrollable container */
+* {
+  scroll-behavior: smooth;
 }

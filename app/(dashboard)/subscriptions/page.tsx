@@ -39,20 +39,20 @@ export default async function SubscriptionsPage({ searchParams }: Props) {
   });
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white">
+    <main className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)]">
       {/* Success banner for email cancellation */}
       {cancelled === "true" && (
-        <div className="mx-8 mt-6 border border-[#c8ff00]/20 bg-[#c8ff00]/5 px-4 py-3">
-          <p className="font-mono text-[11px] text-[#c8ff00] uppercase tracking-widest">
+        <div className="mx-8 mt-6 border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-4 py-3">
+          <p className="font-mono text-[11px] text-[var(--accent)] uppercase tracking-widest">
             Subscription cancelled successfully
           </p>
         </div>
       )}
 
       {/* Header */}
-      <div className="relative z-10 flex items-end justify-between px-8 pt-8 pb-6 border-b border-white/6">
+      <div className="relative z-10 flex items-end justify-between px-8 pt-8 pb-6 border-b border-[var(--border-subtle)]">
         <div>
-          <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.4em] mb-1">
+          <p className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-[0.4em] mb-1">
             SubTrack / Subscriptions
           </p>
           <h1 className="text-3xl font-black tracking-[-0.04em]">
@@ -61,10 +61,10 @@ export default async function SubscriptionsPage({ searchParams }: Props) {
         </div>
         <Link
             href="/subscriptions/new"
-            className="group relative flex items-center gap-3 bg-[#c8ff00] text-black 
+            className="group relative flex items-center gap-3 bg-[var(--accent)] text-[var(--accent-text)] 
                        text-sm font-bold uppercase tracking-widest px-6 py-4
-                       hover:bg-white transition-all duration-300
-                       before:absolute before:inset-0 before:border-2 before:border-[#c8ff00]
+                       hover:bg-[var(--btn-invert-bg)] hover:text-[var(--btn-invert-text)] transition-all duration-300
+                       before:absolute before:inset-0 before:border-2 before:border-[var(--accent)]
                        before:translate-x-1 before:translate-y-1 before:-z-10
                        hover:before:translate-x-2 hover:before:translate-y-2
                        before:transition-transform before:duration-300"

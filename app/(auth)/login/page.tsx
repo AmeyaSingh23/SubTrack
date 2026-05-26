@@ -21,10 +21,10 @@ function AnimatedGrid() {
           key={i}
           className={`transition-all duration-300 ${
             activeCell === i
-              ? "bg-[#c8ff00]"
+              ? "bg-[var(--accent)]"
               : i % 7 === 0
-              ? "bg-[#c8ff00]/10"
-              : "bg-white/2"
+              ? "bg-[var(--accent)]/40"
+              : "bg-[var(--bg-card-hover)]"
           }`}
         />
       ))}
@@ -48,10 +48,10 @@ function GlitchText({ text }: { text: string }) {
       <span className={glitch ? "opacity-0" : "opacity-100"}>{text}</span>
       {glitch && (
         <>
-          <span className="absolute inset-0 text-[#c8ff00] translate-x-0.5 -translate-y-0.5">
+          <span className="absolute inset-0 text-[var(--accent)] translate-x-0.5 -translate-y-0.5">
             {text}
           </span>
-          <span className="absolute inset-0 text-white/50 -translate-x-0.5 translate-y-0.5">
+          <span className="absolute inset-0 text-[var(--text-secondary)] -translate-x-0.5 translate-y-0.5">
             {text}
           </span>
         </>
@@ -64,7 +64,7 @@ export default function LoginPage() {
   const [isHovering, setIsHovering] = useState(false);
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex flex-col lg:flex-row">
+    <main className="min-h-screen bg-[var(--bg)] flex flex-col lg:flex-row">
       {/* Left Panel - Interactive Visual */}
       <div className="h-80 lg:h-auto lg:w-1/2 relative overflow-hidden shrink-0">
         <div className="absolute inset-0 p-8">
@@ -74,8 +74,8 @@ export default function LoginPage() {
         {/* Brand Mark */}
         <div className="absolute top-8 left-8">
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-[#c8ff00]" />
-            <span className="text-[11px] uppercase tracking-[0.4em] text-white/60">
+            <div className="w-3 h-3 bg-[var(--accent)]" />
+            <span className="text-[11px] uppercase tracking-[0.4em] text-[var(--text-secondary)]">
               SubTrack
             </span>
           </div>
@@ -86,8 +86,8 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col p-6 sm:p-8 lg:p-16">
         {/* Mobile Brand */}
         <div className="lg:hidden flex items-center gap-3 mb-12">
-          <div className="w-3 h-3 bg-[#c8ff00]" />
-          <span className="text-[11px] uppercase tracking-[0.4em] text-white/60">
+          <div className="w-3 h-3 bg-[var(--accent)]" />
+          <span className="text-[11px] uppercase tracking-[0.4em] text-[var(--text-secondary)]">
             SubTrack
           </span>
         </div>
@@ -95,17 +95,17 @@ export default function LoginPage() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col justify-center max-w-md">
           <div className="mb-12">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-[#c8ff00] mb-6">
+            <p className="text-[10px] uppercase tracking-[0.4em] text-[var(--accent)] mb-6">
               Authentication Required
             </p>
             <h1 className="text-5xl lg:text-6xl font-light leading-[1.1] tracking-[-0.03em]">
               <GlitchText text="Track" />
               <br />
-              <span className="text-white/30">everything.</span>
+              <span className="text-[var(--text-muted)]">everything.</span>
             </h1>
           </div>
 
-          <p className="text-sm text-white/40 leading-relaxed mb-10 max-w-sm">
+          <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-10 max-w-sm">
             Know exactly where your money goes. Cancel the subscriptions you forgot about.
           </p>
 
@@ -114,9 +114,9 @@ export default function LoginPage() {
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
             className="group relative w-full flex items-center justify-between
-                       bg-white text-[#0a0a0a] text-sm uppercase tracking-[0.2em]
+                       bg-[var(--btn-invert-bg)] text-[var(--btn-invert-text)] text-sm uppercase tracking-[0.2em]
                        px-8 py-5 transition-all duration-300
-                       hover:bg-[#c8ff00]"
+                       hover:bg-[var(--accent)] hover:text-[var(--accent-text)]"
           >
             <svg width="16" height="16" viewBox="0 0 18 18">
               <path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/>
@@ -135,28 +135,28 @@ export default function LoginPage() {
             </svg>
             
             {/* Offset border effect */}
-            <div className="absolute inset-0 border-2 border-white/20 translate-x-1 translate-y-1 -z-10 transition-all duration-300 group-hover:border-[#c8ff00]/40" />
+            <div className="absolute inset-0 border-2 border-[var(--border)] translate-x-1 translate-y-1 -z-10 transition-all duration-300 group-hover:border-[var(--accent)]/40" />
           </button>
 
-          <p className="text-[11px] text-white/20 mt-6 uppercase tracking-[0.2em]">
+          <p className="text-[11px] text-[var(--text-muted)] mt-6 uppercase tracking-[0.2em]">
             First time? Your account is created automatically.
           </p>
-          <p className="text-[11px] text-white/10 mt-2 uppercase tracking-[0.2em]">
+          <p className="text-[11px] text-[var(--text-faint)] mt-2 uppercase tracking-[0.2em]">
             Join thousands tracking smarter.
           </p>
         </div>
 
         {/* Footer - always at bottom, outside the centered content */}
-        <div className="flex items-center gap-6 pt-8 mt-8 border-t border-white/6">
+        <div className="flex items-center gap-6 pt-8 mt-8 border-t border-[var(--border-subtle)]">
           <Link 
             href="/privacy" 
-            className="text-[10px] uppercase tracking-[0.3em] text-white/30 hover:text-[#c8ff00] transition-colors"
+            className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
           >
             Privacy
           </Link>
           <Link 
             href="/terms" 
-            className="text-[10px] uppercase tracking-[0.3em] text-white/30 hover:text-[#c8ff00] transition-colors"
+            className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
           >
             Terms
           </Link>

@@ -34,12 +34,12 @@ export default async function SubscriptionDetailPage({ params, searchParams }: P
   if (!subscription) notFound();
 
   return (
-    <div className="text-white">
+    <div className="text-[var(--text-primary)]">
       <div className="max-w-xl mx-auto px-4 sm:px-8 py-12">
         {/* Renewed banner from email link */}
         {renewed === "true" && (
-          <div className="mb-6 border border-[#c8ff00]/20 bg-[#c8ff00]/5 px-4 py-3">
-            <p className="font-mono text-[11px] text-[#c8ff00] uppercase tracking-widest">
+          <div className="mb-6 border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-4 py-3">
+            <p className="font-mono text-[11px] text-[var(--accent)] uppercase tracking-widest">
               Billing date advanced by one cycle. If you changed plans, update the details below.
             </p>
           </div>
@@ -47,7 +47,7 @@ export default async function SubscriptionDetailPage({ params, searchParams }: P
 
         {/* Header */}
         <div className="mb-10">
-          <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.4em] mb-3">
+          <p className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-[0.4em] mb-3">
             SubTrack / Subscriptions / {subscription.name}
           </p>
           <div className="flex items-center gap-5">
@@ -55,7 +55,7 @@ export default async function SubscriptionDetailPage({ params, searchParams }: P
             <h1 className="text-4xl font-black tracking-[-0.04em]">
               {subscription.name}
               <br />
-              <span className="text-white/20">Details</span>
+              <span className="text-[var(--text-muted)]">Details</span>
             </h1>
           </div>
         </div>

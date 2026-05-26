@@ -25,7 +25,7 @@ export function ServiceLogo({ name, size = 32, className = "" }: Props) {
   return (
     <div
       style={{ width: size, height: size }}
-      className={`relative flex items-center justify-center bg-white/5 overflow-hidden ${className}`}
+      className={`relative flex items-center justify-center bg-[var(--bg-card)] overflow-hidden ${className}`}
     >
       <img
         src={src}
@@ -43,7 +43,7 @@ function LetterAvatar({ name, size, className }: { name: string; size: number; c
   return (
     <div
       style={{ width: size, height: size }}
-      className={`flex items-center justify-center border border-white/10 font-mono text-xs text-white/40 ${className}`}
+      className={`flex items-center justify-center border border-[var(--border)] font-mono text-xs text-[var(--text-secondary)] ${className}`}
     >
       {name[0].toUpperCase()}
     </div>

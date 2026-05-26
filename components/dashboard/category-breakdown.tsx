@@ -16,8 +16,8 @@ export function CategoryBreakdown({ byCategory, monthlyTotal }: Props) {
   const entries = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
 
   return (
-    <div className="bg-white/3 border border-white/7 rounded-xl p-5">
-      <p className="text-[11px] font-mono text-white/30 uppercase tracking-widest mb-4">
+    <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5">
+      <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">
         By Category
       </p>
 
@@ -34,21 +34,21 @@ export function CategoryBreakdown({ byCategory, monthlyTotal }: Props) {
                     className="w-1.5 h-1.5 rounded-full"
                     style={{ backgroundColor: color }}
                   />
-                  <span className="text-xs font-mono text-white/50">
+                  <span className="text-xs font-mono text-[var(--text-secondary)]">
                     {category}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-white/25">
+                  <span className="text-xs font-mono text-[var(--text-muted)]">
                     {pct}%
                   </span>
-                  <span className="text-sm font-mono font-semibold text-white/70 w-16 text-right">
+                  <span className="text-sm font-mono font-semibold text-[var(--text-primary)] w-16 text-right">
                     ₹{amount.toFixed(0)}
                   </span>
                 </div>
               </div>
               {/* Progress bar */}
-              <div className="w-full bg-white/5 rounded-full h-1">
+              <div className="w-full bg-[var(--bg-card)] rounded-full h-1">
                 <div
                   className="h-1 rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: color }}

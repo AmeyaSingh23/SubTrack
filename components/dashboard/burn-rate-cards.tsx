@@ -31,20 +31,20 @@ export function BurnRateCards({ monthlyTotal, annualTotal, totalCount }: Props) 
       {cards.map((card) => (
         <div
           key={card.label}
-          className="relative bg-white/3 border border-white/7 
+          className="relative bg-[var(--bg-card)] border border-[var(--border)] 
                      rounded-xl p-5 overflow-hidden group
-                     hover:border-white/12 transition-colors duration-300"
+                     hover:border-[var(--border)] transition-colors duration-300"
         >
           {/* Subtle top highlight */}
-          <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-[var(--border)] to-transparent" />
 
-          <p className="text-[11px] font-mono text-white/30 uppercase tracking-widest mb-3">
+          <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">
             {card.label}
           </p>
-          <p className="text-2xl sm:text-3xl font-mono font-semibold text-white tracking-tight">
+          <p className="text-2xl sm:text-3xl font-mono font-semibold text-[var(--text-primary)] tracking-tight">
             {card.value}
           </p>
-          <p className="text-[11px] text-white/20 mt-1.5 font-mono">
+          <p className="text-[11px] text-[var(--text-muted)] mt-1.5 font-mono">
             {card.sub}
           </p>
         </div>

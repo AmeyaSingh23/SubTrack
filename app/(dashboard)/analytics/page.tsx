@@ -138,9 +138,9 @@ export default async function AnalyticsPage() {
     .sort((a, b) => b.totalSpent - a.totalSpent);
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="px-8 pt-8 pb-6 border-b border-white/6">
-        <p className="font-mono text-[10px] text-[#c8ff00] uppercase tracking-[0.4em] mb-1">
+    <main className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)]">
+      <div className="px-8 pt-8 pb-6 border-b border-[var(--border-subtle)]">
+        <p className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-[0.4em] mb-1">
           SubTrack / Analytics
         </p>
         <h1 className="text-3xl font-black tracking-[-0.04em]">

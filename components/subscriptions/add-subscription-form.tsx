@@ -21,20 +21,20 @@ function FieldLabel({
   return (
     <div className="flex items-baseline justify-between mb-2">
       <label className="flex items-baseline gap-2">
-        <span className="font-mono text-[10px] text-[#c8ff00] tracking-widest">{number}</span>
-        <span className="font-mono text-[11px] text-white/40 uppercase tracking-widest">{label}</span>
+        <span className="font-mono text-[10px] text-[var(--accent)] tracking-widest">{number}</span>
+        <span className="font-mono text-[11px] text-[var(--text-secondary)] uppercase tracking-widest">{label}</span>
       </label>
       <div className="flex items-center gap-2">
         {autoDetected && (
           // This badge appears when the field was filled automatically
           // from the service registry — tells the user the app did the work
-          <span className="font-mono text-[9px] text-[#c8ff00] uppercase tracking-widest
-                           border border-[#c8ff00]/30 px-1.5 py-0.5">
+          <span className="font-mono text-[9px] text-[var(--accent)] uppercase tracking-widest
+                           border border-[var(--accent)]/30 px-1.5 py-0.5">
             Auto-detected
           </span>
         )}
         {optional && !autoDetected && (
-          <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Optional</span>
+          <span className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-widest">Optional</span>
         )}
       </div>
     </div>
@@ -42,25 +42,25 @@ function FieldLabel({
 }
 
 const inputClass = `
-  w-full bg-transparent border border-white/[0.08] text-white font-mono text-sm
+  w-full bg-transparent border border-[var(--border)] text-[var(--text-primary)] font-mono text-sm
   px-4 py-3 outline-none
-  focus:border-[#c8ff00]/50 focus:bg-[#c8ff00]/[0.02]
-  placeholder:text-white/20
+  focus:border-[var(--accent)]/50 focus:bg-[var(--accent)]/[0.02]
+  placeholder:text-[var(--text-muted)]
   transition-all duration-200
 `;
 
 const inputAutoClass = `
-  w-full bg-[#c8ff00]/[0.03] border border-[#c8ff00]/20 text-white font-mono text-sm
+  w-full bg-[var(--accent)]/[0.03] border border-[var(--accent)]/20 text-[var(--text-primary)] font-mono text-sm
   px-4 py-3 outline-none
-  focus:border-[#c8ff00]/50
-  placeholder:text-white/20
+  focus:border-[var(--accent)]/50
+  placeholder:text-[var(--text-muted)]
   transition-all duration-200
 `;
 
 const selectClass = `
-  w-full bg-[#0a0a0a] border border-white/[0.08] text-white font-mono text-sm
+  w-full bg-[var(--bg)] border border-[var(--border)] text-[var(--text-primary)] font-mono text-sm
   px-4 py-3 outline-none
-  focus:border-[#c8ff00]/50
+  focus:border-[var(--accent)]/50
   transition-all duration-200
   appearance-none cursor-pointer
 `;
@@ -106,7 +106,7 @@ export function AddSubscriptionForm() {
 
   return (
     <form action={formAction} className="space-y-0">
-      <div className="border-t border-white/6 pt-8 space-y-8">
+      <div className="border-t border-[var(--border-subtle)] pt-8 space-y-8">
 
         {/* 01 — Name with logo preview */}
         <div>
@@ -130,7 +130,7 @@ export function AddSubscriptionForm() {
           </div>
           {/* Detection confirmation message */}
           {detected && (
-            <p className="font-mono text-[10px] text-[#c8ff00]/60 mt-1.5 uppercase tracking-widest">
+            <p className="font-mono text-[10px] text-[var(--accent)]/60 mt-1.5 uppercase tracking-widest">
               ✓ Service recognised — fields auto-filled below
             </p>
           )}
@@ -151,7 +151,7 @@ export function AddSubscriptionForm() {
             />
             <select name="currency" defaultValue="INR" className={selectClass}>
               {CURRENCIES.map((c) => (
-                <option key={c} value={c} className="bg-[#0a0a0a]">{c}</option>
+                <option key={c} value={c} className="bg-[var(--bg)]">{c}</option>
               ))}
             </select>
           </div>
@@ -180,8 +180,8 @@ export function AddSubscriptionForm() {
                   className="peer sr-only"
                 />
                 <span className="w-full text-center font-mono text-[11px] uppercase tracking-widest
-                                 border border-white/8 py-3 text-white/30
-                                 peer-checked:border-[#c8ff00]/50 peer-checked:text-[#c8ff00] peer-checked:bg-[#c8ff00]/4
+                                 border border-[var(--border)] py-3 text-[var(--text-muted)]
+                                 peer-checked:border-[var(--accent)]/50 peer-checked:text-[var(--accent)] peer-checked:bg-[var(--accent)]/4
                                  transition-all duration-200 -ml-px first:ml-0">
                   {cycle}
                 </span>
@@ -221,8 +221,8 @@ export function AddSubscriptionForm() {
                   className="peer sr-only"
                 />
                 <span className="w-full text-center font-mono text-[11px] uppercase tracking-widest
-                                 border border-white/8 py-3 text-white/30
-                                 peer-checked:border-[#c8ff00]/50 peer-checked:text-[#c8ff00] peer-checked:bg-[#c8ff00]/4
+                                 border border-[var(--border)] py-3 text-[var(--text-muted)]
+                                 peer-checked:border-[var(--accent)]/50 peer-checked:text-[var(--accent)] peer-checked:bg-[var(--accent)]/4
                                  transition-all duration-200 -ml-px first:ml-0">
                   {cat}
                 </span>
@@ -260,14 +260,14 @@ export function AddSubscriptionForm() {
                 onChange={(e) => setIsTrial(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="w-10 h-5 border border-white/8 peer-checked:border-[#c8ff00]/50
-                              peer-checked:bg-[#c8ff00]/10 transition-all duration-200" />
-              <div className="absolute top-1 left-1 w-3 h-3 bg-white/20
-                              peer-checked:bg-[#c8ff00] peer-checked:translate-x-5
+              <div className="w-10 h-5 border border-[var(--border)] peer-checked:border-[var(--accent)]/50
+                              peer-checked:bg-[var(--accent)]/10 transition-all duration-200" />
+              <div className="absolute top-1 left-1 w-3 h-3 bg-[var(--text-muted)]
+                              peer-checked:bg-[var(--accent)] peer-checked:translate-x-5
                               transition-all duration-200" />
             </div>
-            <span className="font-mono text-[11px] text-white/30 uppercase tracking-widest
-                             group-hover:text-white/50 transition-colors">
+            <span className="font-mono text-[11px] text-[var(--text-muted)] uppercase tracking-widest
+                             group-hover:text-[var(--text-secondary)] transition-colors">
               {isTrial ? "Yes — this is a trial" : "No"}
             </span>
           </label>
@@ -296,14 +296,14 @@ export function AddSubscriptionForm() {
                 onChange={(e) => setIsShared(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="w-10 h-5 border border-white/8 peer-checked:border-[#c8ff00]/50
-                            peer-checked:bg-[#c8ff00]/10 transition-all duration-200" />
-              <div className="absolute top-1 left-1 w-3 h-3 bg-white/20
-                            peer-checked:bg-[#c8ff00] peer-checked:translate-x-5
+              <div className="w-10 h-5 border border-[var(--border)] peer-checked:border-[var(--accent)]/50
+                            peer-checked:bg-[var(--accent)]/10 transition-all duration-200" />
+              <div className="absolute top-1 left-1 w-3 h-3 bg-[var(--text-muted)]
+                            peer-checked:bg-[var(--accent)] peer-checked:translate-x-5
                               transition-all duration-200" />
             </div>
-            <span className="font-mono text-[11px] text-white/30 uppercase tracking-widest
-                            group-hover:text-white/50 transition-colors">
+            <span className="font-mono text-[11px] text-[var(--text-muted)] uppercase tracking-widest
+                            group-hover:text-[var(--text-secondary)] transition-colors">
               {isShared ? "Yes — splitting with others" : "No"}
             </span>
           </label>
@@ -318,7 +318,7 @@ export function AddSubscriptionForm() {
                 defaultValue="2"
                 className={inputClass}
               />
-              <p className="font-mono text-[10px] text-white/20 mt-2">
+              <p className="font-mono text-[10px] text-[var(--text-muted)] mt-2">
                 Include yourself. e.g. 2 = you + 1 friend.
               </p>
             </div>
@@ -326,17 +326,17 @@ export function AddSubscriptionForm() {
         </div>
 
         {/* Submit */}
-        <div className="pt-4 border-t border-white/6">
+        <div className="pt-4 border-t border-[var(--border-subtle)]">
           <button
             type="submit"
             disabled={isPending}
             className="group relative w-full flex items-center justify-center gap-3
-                       bg-white text-black font-bold text-sm uppercase tracking-widest
+                       bg-[var(--btn-invert-bg)] text-[var(--btn-invert-text)] font-bold text-sm uppercase tracking-widest
                        px-6 py-4 transition-all duration-300
-                       hover:bg-[#c8ff00] disabled:opacity-40 disabled:cursor-not-allowed
-                       before:absolute before:inset-0 before:border-2 before:border-white/20
+                       hover:bg-[var(--accent)] hover:text-[var(--accent-text)] disabled:opacity-40 disabled:cursor-not-allowed
+                       before:absolute before:inset-0 before:border-2 before:border-[var(--border)]
                        before:translate-x-1 before:translate-y-1 before:-z-10
-                       hover:before:border-[#c8ff00]/40
+                       hover:before:border-[var(--accent)]/40
                        before:transition-all before:duration-300"
           >
             {isPending ? "Saving..." : "Track Subscription →"}

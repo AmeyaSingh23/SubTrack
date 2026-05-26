@@ -45,15 +45,15 @@ function FieldLabel({
   return (
     <div className="flex items-baseline justify-between mb-2">
       <label className="flex items-baseline gap-2">
-        <span className="font-mono text-[10px] text-[#c8ff00] tracking-widest">
+        <span className="font-mono text-[10px] text-[var(--accent)] tracking-widest">
           {number}
         </span>
-        <span className="font-mono text-[11px] text-white/40 uppercase tracking-widest">
+        <span className="font-mono text-[11px] text-[var(--text-secondary)] uppercase tracking-widest">
           {label}
         </span>
       </label>
       {optional && (
-        <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
+        <span className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-widest">
           Optional
         </span>
       )}
@@ -62,17 +62,17 @@ function FieldLabel({
 }
 
 const inputClass = `
-  w-full bg-transparent border border-white/8 text-white font-mono text-sm
+  w-full bg-transparent border border-[var(--border)] text-[var(--text-primary)] font-mono text-sm
   px-4 py-3 outline-none
-  focus:border-[#c8ff00]/50 focus:bg-[#c8ff00]/2
-  placeholder:text-white/20
+  focus:border-[var(--accent)]/50 focus:bg-[var(--accent)]/2
+  placeholder:text-[var(--text-muted)]
   transition-all duration-200
 `;
 
 const selectClass = `
-  w-full bg-[#0a0a0a] border border-white/8 text-white font-mono text-sm
+  w-full bg-[var(--bg)] border border-[var(--border)] text-[var(--text-primary)] font-mono text-sm
   px-4 py-3 outline-none
-  focus:border-[#c8ff00]/50
+  focus:border-[var(--accent)]/50
   transition-all duration-200
   appearance-none cursor-pointer
 `;
@@ -110,8 +110,8 @@ export function SubscriptionDetailForm({
     <div className="space-y-8">
       {/* Cancelled Banner */}
       {!subscription.isActive && (
-        <div className="border border-red-500/20 bg-red-500/5 px-4 py-3">
-          <p className="font-mono text-[11px] text-red-400 uppercase tracking-widest">
+        <div className="border border-[var(--danger-border)] bg-[var(--danger-bg)] px-4 py-3">
+          <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: "var(--danger-text)" }}>
             This subscription is cancelled
           </p>
         </div>
@@ -119,11 +119,11 @@ export function SubscriptionDetailForm({
 
       {/* Shared subscription info banner */}
       {subscription.isShared && (
-        <div className="border border-white/8 bg-white/3 px-4 py-3 flex items-center justify-between">
-          <p className="font-mono text-[11px] text-white/40 uppercase tracking-widest">
+        <div className="border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 flex items-center justify-between">
+          <p className="font-mono text-[11px] text-[var(--text-secondary)] uppercase tracking-widest">
             Shared ÷ {subscription.splitCount} — your share
           </p>
-          <p className="font-mono text-sm font-bold text-[#c8ff00]">
+          <p className="font-mono text-sm font-bold text-[var(--accent)]">
             ₹{yourShare} / {subscription.billingCycle === "yearly" ? "yr" : subscription.billingCycle === "weekly" ? "wk" : "mo"}
           </p>
         </div>
@@ -131,7 +131,7 @@ export function SubscriptionDetailForm({
 
       <form
         action={formAction}
-        className={`border-t border-white/6 pt-8 space-y-8 ${
+        className={`border-t border-[var(--border-subtle)] pt-8 space-y-8 ${
           !subscription.isActive ? "opacity-50 pointer-events-none" : ""
         }`}
       >
@@ -166,7 +166,7 @@ export function SubscriptionDetailForm({
               className={selectClass}
             >
               {CURRENCIES.map((c) => (
-                <option key={c} value={c} className="bg-[#0a0a0a]">
+                <option key={c} value={c} className="bg-[var(--bg)]">
                   {c}
                 </option>
               ))}
@@ -193,11 +193,11 @@ export function SubscriptionDetailForm({
                 />
                 <span
                   className="w-full text-center font-mono text-[11px]
-                             uppercase tracking-widest border border-white/8
-                             py-3 text-white/30
-                             peer-checked:border-[#c8ff00]/50
-                             peer-checked:text-[#c8ff00]
-                             peer-checked:bg-[#c8ff00]/4
+                             uppercase tracking-widest border border-[var(--border)]
+                             py-3 text-[var(--text-muted)]
+                             peer-checked:border-[var(--accent)]/50
+                             peer-checked:text-[var(--accent)]
+                             peer-checked:bg-[var(--accent)]/4
                              transition-all duration-200
                              -ml-px first:ml-0"
                 >
@@ -239,11 +239,11 @@ export function SubscriptionDetailForm({
                 />
                 <span
                   className="w-full text-center font-mono text-[11px]
-                             uppercase tracking-widest border border-white/8
-                             py-3 text-white/30
-                             peer-checked:border-[#c8ff00]/50
-                             peer-checked:text-[#c8ff00]
-                             peer-checked:bg-[#c8ff00]/4
+                             uppercase tracking-widest border border-[var(--border)]
+                             py-3 text-[var(--text-muted)]
+                             peer-checked:border-[var(--accent)]/50
+                             peer-checked:text-[var(--accent)]
+                             peer-checked:bg-[var(--accent)]/4
                              transition-all duration-200
                              -ml-px first:ml-0"
                 >
@@ -263,8 +263,8 @@ export function SubscriptionDetailForm({
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block font-mono text-[10px]
-                         text-[#c8ff00] uppercase tracking-widest
-                         mb-2 hover:text-white transition-colors"
+                         text-[var(--accent)] uppercase tracking-widest
+                         mb-2 hover:text-[var(--text-primary)] transition-colors"
             >
               ↗ Open cancellation page
             </a>
@@ -290,20 +290,20 @@ export function SubscriptionDetailForm({
               className="sr-only peer"
             />
             <div
-              className="w-10 h-5 border border-white/8
-                         peer-checked:border-[#c8ff00]/50
-                         peer-checked:bg-[#c8ff00]/10
+              className="w-10 h-5 border border-[var(--border)]
+                         peer-checked:border-[var(--accent)]/50
+                         peer-checked:bg-[var(--accent)]/10
                          transition-all duration-200 relative"
             >
               <div
                 className={`absolute top-1 left-1 w-3 h-3 transition-all duration-200
-                ${isTrial ? "bg-[#c8ff00] translate-x-5" : "bg-white/20"}`}
+                ${isTrial ? "bg-[var(--accent)] translate-x-5" : "bg-[var(--text-muted)]"}`}
               />
             </div>
             <span
-              className="font-mono text-[11px] text-white/30
+              className="font-mono text-[11px] text-[var(--text-muted)]
                          uppercase tracking-widest
-                         group-hover:text-white/50 transition-colors"
+                         group-hover:text-[var(--text-secondary)] transition-colors"
             >
               {isTrial ? "Yes — this is a trial" : "No"}
             </span>
@@ -333,20 +333,20 @@ export function SubscriptionDetailForm({
               className="sr-only peer"
             />
             <div
-              className="w-10 h-5 border border-white/8
-                         peer-checked:border-[#c8ff00]/50
-                         peer-checked:bg-[#c8ff00]/10
+              className="w-10 h-5 border border-[var(--border)]
+                         peer-checked:border-[var(--accent)]/50
+                         peer-checked:bg-[var(--accent)]/10
                          transition-all duration-200 relative"
             >
               <div
                 className={`absolute top-1 left-1 w-3 h-3 transition-all duration-200
-                ${isShared ? "bg-[#c8ff00] translate-x-5" : "bg-white/20"}`}
+                ${isShared ? "bg-[var(--accent)] translate-x-5" : "bg-[var(--text-muted)]"}`}
               />
             </div>
             <span
-              className="font-mono text-[11px] text-white/30
+              className="font-mono text-[11px] text-[var(--text-muted)]
                          uppercase tracking-widest
-                         group-hover:text-white/50 transition-colors"
+                         group-hover:text-[var(--text-secondary)] transition-colors"
             >
               {isShared ? "Yes — splitting with others" : "No"}
             </span>
@@ -362,7 +362,7 @@ export function SubscriptionDetailForm({
                 defaultValue={subscription.splitCount}
                 className={inputClass}
               />
-              <p className="font-mono text-[10px] text-white/20 mt-2">
+              <p className="font-mono text-[10px] text-[var(--text-muted)] mt-2">
                 Include yourself. e.g. 2 = you + 1 friend.
               </p>
             </div>
@@ -370,14 +370,14 @@ export function SubscriptionDetailForm({
         </div>
 
         {/* Save Button */}
-        <div className="pt-4 border-t border-white/6">
+        <div className="pt-4 border-t border-[var(--border-subtle)]">
           <button
             type="submit"
             disabled={isPending}
             className="w-full flex items-center justify-center gap-3
-                       bg-white text-black font-bold text-sm
+                       bg-[var(--btn-invert-bg)] text-[var(--btn-invert-text)] font-bold text-sm
                        uppercase tracking-widest px-6 py-4
-                       hover:bg-[#c8ff00]
+                       hover:bg-[var(--accent)] hover:text-[var(--accent-text)]
                        transition-colors duration-200
                        disabled:opacity-40
                        disabled:cursor-not-allowed"
@@ -388,9 +388,9 @@ export function SubscriptionDetailForm({
       </form>
 
       {/* Delete Section */}
-      <div className="border-t border-white/6 pt-8">
+      <div className="border-t border-[var(--border-subtle)] pt-8">
         {subscription.isActive && (
-          <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest mb-4">
+          <p className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest mb-4">
             Danger Zone
           </p>
         )}
@@ -399,30 +399,31 @@ export function SubscriptionDetailForm({
             {!showDeleteConfirm ? (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="w-full border border-red-500/20
-                           text-red-400 font-mono text-xs
+                className="w-full border border-[var(--danger-border)]
+                           font-mono text-xs
                            uppercase tracking-widest px-6 py-3
-                           hover:bg-red-500/5
-                           hover:border-red-500/40
+                           hover:bg-[var(--danger-bg)]
+                           hover:border-[var(--danger-border-strong)]
                            transition-colors"
+                style={{ color: "var(--danger-text)" }}
               >
                 Cancel Subscription
               </button>
             ) : (
-              <div className="border border-red-500/30 bg-red-500/5 p-5 space-y-4">
-                <p className="font-mono text-sm text-white/60">
+              <div className="border border-[var(--danger-border-strong)] bg-[var(--danger-bg)] p-5 space-y-4">
+                <p className="font-mono text-sm text-[var(--text-secondary)]">
                   This will mark{" "}
-                  <span className="text-white">{subscription.name}</span>{" "}
+                  <span className="text-[var(--text-primary)]">{subscription.name}</span>{" "}
                   as cancelled. Your data is preserved but it won&apos;t
                   appear in active lists.
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="border border-white/10
-                               text-white/40 font-mono text-xs
+                    className="border border-[var(--border)]
+                               text-[var(--text-secondary)] font-mono text-xs
                                uppercase tracking-widest py-3
-                               hover:text-white/60
+                               hover:text-[var(--text-secondary)]
                                transition-colors"
                   >
                     Keep It
@@ -430,12 +431,15 @@ export function SubscriptionDetailForm({
                   <button
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="bg-red-500/80 text-white
+                    className="text-white
                                font-mono text-xs uppercase
                                tracking-widest py-3
-                               hover:bg-red-500 transition-colors
+                               transition-colors
                                disabled:opacity-40
                                disabled:cursor-not-allowed"
+                    style={{ backgroundColor: "var(--danger-solid)" }}
+                    onMouseEnter={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = "var(--danger-solid-hover)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--danger-solid)"; }}
                   >
                     {isDeleting ? "Cancelling..." : "Yes, Cancel"}
                   </button>

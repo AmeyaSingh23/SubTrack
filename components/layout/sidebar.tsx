@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { ThemeToggle } from "./theme-toggle";
 
 function DashboardIcon() {
   return (
@@ -114,14 +115,14 @@ function SidebarItem({
       className={`
         group relative flex items-center gap-3 px-3 h-10 rounded-lg
         transition-all duration-200 ease-out
-        ${isActive ? "bg-white/8 text-white" : "text-white/40 hover:text-white/90 hover:bg-white/4"}
+        ${isActive ? "bg-[var(--bg-card-hover)] text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]"}
         ${collapsed ? "justify-center px-0" : ""}
       `}
     >
       {isActive && (
-        <div className="absolute inset-0 rounded-lg bg-linear-to-r from-white/6 to-transparent opacity-60" />
+        <div className="absolute inset-0 rounded-lg bg-linear-to-r from-[var(--bg-card)] to-transparent opacity-60" />
       )}
-      <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-white transition-all duration-200 ${isActive ? "opacity-100" : "opacity-0"}`} />
+      <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-[var(--text-primary)] transition-all duration-200 ${isActive ? "opacity-100" : "opacity-0"}`} />
       <span className={`relative flex items-center justify-center w-5 h-5 shrink-0 ${collapsed ? "" : "ml-1"}`}>
         <Icon />
       </span>
@@ -146,7 +147,7 @@ function SidebarContent({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-[var(--bg-card)] to-transparent pointer-events-none" />
 
       <nav className="relative flex-1 px-3 py-2">
         <div className="space-y-1">
@@ -167,13 +168,13 @@ function SidebarContent({
         </div>
       </nav>
 
-      <div className="relative px-3 py-4 border-t border-white/4">
+      <div className="relative px-3 py-4 border-t border-[var(--border-subtle)]">
         <div className={`flex items-center gap-2 mb-4 px-3 ${collapsed ? "justify-center px-0" : ""}`}>
           <div className="relative">
             <div className="w-2 h-2 rounded-full bg-emerald-500" />
             <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-500 animate-ping opacity-40" />
           </div>
-          <span className={`text-[11px] font-medium text-white/30 uppercase tracking-wider transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
+          <span className={`text-[11px] font-medium text-[var(--text-muted)] uppercase tracking-wider transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
             System Active
           </span>
         </div>
@@ -181,7 +182,7 @@ function SidebarContent({
         <Link
           href="/profile"
           onClick={onNavClick}
-          className={`group flex items-center gap-3 w-full h-10 rounded-lg text-white/90 hover:bg-white/4 transition-colors duration-200 ease-out ${collapsed ? "justify-center px-0" : "px-3"}`}
+          className={`group flex items-center gap-3 w-full h-10 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition-colors duration-200 ease-out ${collapsed ? "justify-center px-0" : "px-3"}`}
         >
           <div className={`flex items-center gap-3 py-2 rounded-lg w-full ${collapsed ? "justify-center" : ""}`}>
             <div className="w-7 h-7 rounded-full overflow-hidden bg-linear-to-br from-violet-500/80 to-indigo-600/80 flex items-center justify-center shrink-0">
@@ -194,16 +195,19 @@ function SidebarContent({
               )}
             </div>
             <div className={`flex flex-col transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
-              <span className="text-[13px] font-medium text-white/90 whitespace-nowrap">
+              <span className="text-[13px] font-medium text-[var(--text-primary)] whitespace-nowrap">
                 {session?.user?.name?.split(" ")[0] || "User"}
               </span>
             </div>
           </div>
         </Link>
 
+        {/* Theme toggle */}
+        <ThemeToggle collapsed={collapsed} />
+
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className={`group flex items-center gap-3 w-full px-3 h-10 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/4 transition-all duration-200 ease-out ${collapsed ? "justify-center px-0" : ""}`}
+          className={`group flex items-center gap-3 w-full px-3 h-10 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)] transition-all duration-200 ease-out ${collapsed ? "justify-center px-0" : ""}`}
         >
           <span className="flex items-center justify-center w-5 h-5 shrink-0"><LogoutIcon /></span>
           <span className={`text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap transition-all duration-300 ${collapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"}`}>
@@ -214,7 +218,7 @@ function SidebarContent({
         {/* Collapse — desktop only */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className={`group hidden md:flex items-center gap-3 w-full px-3 h-10 rounded-lg mt-1 text-white/30 hover:text-white/60 hover:bg-white/4 transition-all duration-200 ease-out ${collapsed ? "justify-center px-0" : ""}`}
+          className={`group hidden md:flex items-center gap-3 w-full px-3 h-10 rounded-lg mt-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-card)] transition-all duration-200 ease-out ${collapsed ? "justify-center px-0" : ""}`}
         >
           <span className={`flex items-center justify-center w-5 h-5 shrink-0 transition-transform duration-300 ease-out ${collapsed ? "rotate-180" : "rotate-0"}`}>
             <CollapseIcon />
@@ -243,7 +247,7 @@ export function Sidebar() {
       {/* ── MOBILE: hamburger button fixed to top-left ── */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#0a0a0a] border border-white/10 text-white/60 hover:text-white transition-colors"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[var(--bg)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
         aria-label="Open menu"
       >
         <MenuIcon />
@@ -261,7 +265,7 @@ export function Sidebar() {
       <aside
         className={`
           md:hidden fixed top-0 left-0 z-50 h-full w-64
-          bg-[#0a0a0a] border-r border-white/6
+          bg-[var(--bg)] border-r border-[var(--border-subtle)]
           transition-transform duration-300 ease-out
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
         `}
@@ -269,7 +273,7 @@ export function Sidebar() {
         {/* Close button */}
         <button
           onClick={() => setMobileOpen(false)}
-          className="absolute top-4 right-4 p-1.5 text-white/40 hover:text-white transition-colors"
+          className="absolute top-4 right-4 p-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
         >
           <CloseIcon />
         </button>
@@ -284,7 +288,7 @@ export function Sidebar() {
       <aside
         className={`
           hidden md:flex flex-col h-full shrink-0
-          bg-[#0a0a0a] border-r border-white/6
+          bg-[var(--bg)] border-r border-[var(--border-subtle)]
           transition-all duration-300 ease-out
           ${collapsed ? "w-16" : "w-60"}
         `}
