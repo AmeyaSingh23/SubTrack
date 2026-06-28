@@ -103,6 +103,7 @@ export async function updateSubscription(id: string, previousState: unknown, for
       isTrial, trialEndDate,
       isShared,
       splitCount,
+      isActive: true, // Automatically reactivate if saved
       reminderToken: null, // Invalidate any pending email cancel link
     },
   });

@@ -91,6 +91,7 @@ export function SubscriptionDetailForm({
   const [isShared, setIsShared] = useState(subscription.isShared);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, startDeleteTransition] = useTransition();
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   const updateWithId = updateSubscription.bind(null, subscription.id);
   const [, formAction, isPending] = useActionState(updateWithId, null);
@@ -109,10 +110,33 @@ export function SubscriptionDetailForm({
   return (
     <div className="space-y-8">
       {/* Cancelled Banner */}
-      {!subscription.isActive && (
-        <div className="border border-[var(--danger-border)] bg-[var(--danger-bg)] px-4 py-3">
-          <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: "var(--danger-text)" }}>
-            This subscription is cancelled
+      {!subscription.isActive && !isUnlocked && (
+        <div className="border border-[var(--danger-border)] bg-[var(--danger-bg)] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: "var(--danger-text)" }}>
+              This subscription is cancelled
+            </p>
+            <p className="font-mono text-[10px] text-[var(--text-muted)] mt-1">
+              To reactivate this subscription, unlock the details below, edit/verify the fields, and save changes.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsUnlocked(true)}
+            className="shrink-0 font-mono text-xs uppercase tracking-widest px-6 py-3 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-all duration-300"
+          >
+            Reactivate
+          </button>
+        </div>
+      )}
+
+      {!subscription.isActive && isUnlocked && (
+        <div className="border border-[var(--accent)]/20 bg-[var(--accent)]/5 p-4">
+          <p className="font-mono text-[11px] text-[var(--accent)] uppercase tracking-widest">
+            Reactivation Mode
+          </p>
+          <p className="font-mono text-[10px] text-[var(--text-muted)] mt-1">
+            The form is now unlocked. Update the billing date and details, then click <strong>Save Changes</strong> below to reactivate this subscription.
           </p>
         </div>
       )}
@@ -132,7 +156,7 @@ export function SubscriptionDetailForm({
       <form
         action={formAction}
         className={`border-t border-[var(--border-subtle)] pt-8 space-y-8 ${
-          !subscription.isActive ? "opacity-50 pointer-events-none" : ""
+          !subscription.isActive && !isUnlocked ? "opacity-50 pointer-events-none" : ""
         }`}
       >
         {/* 01 Name */}
@@ -281,7 +305,7 @@ export function SubscriptionDetailForm({
         {/* 07 Trial */}
         <div>
           <FieldLabel number="07" label="Free Trial?" />
-          <label className="flex items-center gap-4 cursor-pointer group">
+          <label className="relative flex items-center gap-4 cursor-pointer group">
             <input
               name="isTrial"
               type="checkbox"
@@ -324,7 +348,7 @@ export function SubscriptionDetailForm({
         {/* 08 Shared Subscription */}
         <div>
           <FieldLabel number="08" label="Shared Subscription?" optional />
-          <label className="flex items-center gap-4 cursor-pointer group">
+          <label className="relative flex items-center gap-4 cursor-pointer group">
             <input
               name="isShared"
               type="checkbox"
