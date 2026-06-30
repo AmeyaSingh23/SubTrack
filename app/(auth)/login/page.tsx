@@ -1,8 +1,9 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 function AnimatedGrid() {
   const [activeCell, setActiveCell] = useState<number | null>(null);
@@ -62,6 +63,14 @@ function GlitchText({ text }: { text: string }) {
 
 export default function LoginPage() {
   const [isHovering, setIsHovering] = useState(false);
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
 
   return (
     <main className="min-h-screen bg-[var(--bg)] flex flex-col lg:flex-row">

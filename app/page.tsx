@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { SmoothScrollLink } from "@/components/ui/smooth-scroll-link";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 const FEATURES = [
   {
@@ -25,7 +27,12 @@ const STATS = [
   { value: "8.2", label: "avg. active subscriptions per person*" },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--text-primary)] overflow-x-hidden">
       {/* Nav */}
